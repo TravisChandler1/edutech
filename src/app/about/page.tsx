@@ -21,7 +21,7 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-adire-pattern bg-opacity-10">
+    <div className="min-h-screen non-home-bg">
       <Header />
       {/* Mission & Vision */}
       <motion.section
@@ -31,7 +31,7 @@ export default function About() {
         transition={{ duration: 0.8 }}
       >
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg text-center"
+          className="glass-card p-8 rounded-lg text-center"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -51,7 +51,7 @@ export default function About() {
       {/* Our Story (Timeline) */}
       <section className="container mx-auto px-6 py-12">
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg"
+          className="glass-card p-8 rounded-lg"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -83,7 +83,7 @@ export default function About() {
           {team.map((member, i) => (
             <motion.div
               key={i}
-              className="bg-yoruba-cream/50 backdrop-blur-md p-6 rounded-lg border-2 border-yoruba-gold shadow-md hover:shadow-lg transition-transform"
+              className="glass-card-light p-6 rounded-lg hover:shadow-lg transition-transform"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
@@ -105,7 +105,7 @@ export default function About() {
       {/* Cultural Impact Section */}
       <section className="container mx-auto px-6 py-12">
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg"
+          className="glass-card p-8 rounded-lg"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}

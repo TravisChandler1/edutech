@@ -10,7 +10,6 @@ const config: Config = {
       colors: {
         'yoruba-red': '#A6192E',
         'yoruba-gold': '#D4A017',
-        'yoruba-green': '#1A3C34',
         'yoruba-cream': '#F5E8C7',
         'yoruba-orange': '#F28C38',
         'yoruba-navy': '#1C2526',

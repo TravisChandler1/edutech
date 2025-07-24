@@ -33,7 +33,7 @@ export default function ClassCard({ classLevel, onWaitlist }: ClassCardProps) {
 
   return (
     <motion.div
-      className="bg-yoruba-cream/50 backdrop-blur-md border-2 border-yoruba-green p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform"
+      className="bg-white border-2 border-yoruba-gold p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -41,7 +41,7 @@ export default function ClassCard({ classLevel, onWaitlist }: ClassCardProps) {
     >
       <h3 className="text-xl font-poppins font-bold text-yoruba-red">{classLevel.title}</h3>
       <p className="text-yoruba-navy my-4 font-noto">{classLevel.description}</p>
-      <p className="text-yoruba-green font-bold mb-4">{classLevel.price}</p>
+      <p className="text-yoruba-navy font-bold mb-4">{classLevel.price}</p>
       <div className="flex flex-col space-y-4">
         <button
           onClick={handlePayment}

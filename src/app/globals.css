@@ -1,18 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lora&family=Noto+Sans&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lora&family=Noto+Sans&family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;700;800&display=swap');
 
 :root {
   --yoruba-red: #A6192E;
   --yoruba-gold: #D4A017;
-  --yoruba-green: #1A3C34;
+  --yoruba-green: #020735;
   --yoruba-cream: #F5E8C7;
   --yoruba-orange: #F28C38;
-  --yoruba-navy: #1C2526;
+  --yoruba-navy: #020735;
+  --yoruba-dark-overlay: #020735cc;
 }
 
 body {
   font-family: 'Poppins', sans-serif;
   color: var(--yoruba-navy);
-  background-color: var(--yoruba-cream);
+  background-color: white;
 }
 
 html {
@@ -22,4 +27,130 @@ html {
 *:focus {
   outline: 2px solid var(--yoruba-gold);
   outline-offset: 2px;
+}  
+
+.non-home-bg {
+  background-color: white !important;
+}
+
+/* Section borders */
+.section-border {
+  border: 2px solid var(--yoruba-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.section-border-top {
+  border-top: 2px solid var(--yoruba-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.section-border-bottom {
+  border-bottom: 2px solid var(--yoruba-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Our Classes section background */
+.our-classes-bg {
+  background-color: var(--yoruba-navy);
+  color: white;
+  position: relative;
+}
+
+/* Wavy bottom border effect */
+.our-classes-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: var(--yoruba-navy);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 95% 80%, 85% 90%, 75% 95%, 65% 90%, 55% 85%, 45% 90%, 35% 95%, 25% 90%, 15% 80%, 5% 60%, 0 40%);
+}
+
+/* Newsletter section with wavy top border */
+.newsletter-bg {
+  background-color: var(--yoruba-navy);
+  color: white;
+  position: relative;
+}
+
+/* Wavy top border effect */
+.newsletter-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: var(--yoruba-navy);
+  clip-path: polygon(0 60%, 5% 40%, 15% 20%, 25% 10%, 35% 5%, 45% 10%, 55% 15%, 65% 10%, 75% 5%, 85% 10%, 95% 20%, 100% 40%, 100% 100%, 0 100%);
+  z-index: 1;
+}
+
+/* Wavy bottom border effect for newsletter */
+.newsletter-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: var(--yoruba-navy);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 95% 80%, 85% 90%, 75% 95%, 65% 90%, 55% 85%, 45% 90%, 35% 95%, 25% 90%, 15% 80%, 5% 60%, 0 40%);
+}
+
+/* Class cards - simple white background */
+.class-card {
+  background: white;
+  color: var(--yoruba-navy);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Ken Burns effect for hero background */
+.kenburns-bg {
+  animation: kenburns 12s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate(-2%, -2%);
+  }
+}
+
+/* Dark overlay for hero section */
+.hero-dark-overlay {
+  background: linear-gradient(to bottom, var(--yoruba-dark-overlay), transparent);
+}
+
+/* AI-inspired heading fonts */
+.font-orbitron {
+  font-family: 'Orbitron', monospace;
+}
+
+.font-exo {
+  font-family: 'Exo 2', sans-serif;
+}
+
+/* Custom heading styles */
+h1, .heading-primary {
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+h2, .heading-secondary {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+h3, .heading-tertiary {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 } 

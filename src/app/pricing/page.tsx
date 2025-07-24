@@ -7,10 +7,9 @@ import Footer from '../../components/Footer';
 import YorubaProverb from '../../components/YorubaProverb';
 
 const groupPricing = [
-  { level: 'Novice', price: '₦10,000/month', features: ['Weekly group sessions', 'Community access'] },
-  { level: 'Beginner', price: '₦15,000/month', features: ['Weekly group sessions', 'Community access'] },
-  { level: 'Intermediate', price: '₦20,000/month', features: ['Weekly group sessions', 'Community access'] },
-  { level: 'Advanced', price: '₦25,000/month', features: ['Weekly group sessions', 'Community access'] },
+  { level: 'Free Plan', price: 'Free', features: ['Basic greetings and phrases', 'Community access'] },
+  { level: 'Premium', price: '₦15,000/month', features: ['Weekly group sessions', 'Community access', 'Pronunciation guidance'] },
+  { level: 'Pro+', price: '₦25,000/month', features: ['Advanced features', 'Community access', 'Personalized learning paths'] },
 ];
 
 const individualPricing = [
@@ -29,7 +28,7 @@ const paymentOptions = [
 
 export default function Pricing() {
   return (
-    <div className="min-h-screen bg-adire-pattern bg-opacity-10">
+    <div className="min-h-screen non-home-bg">
       <Header />
       <motion.section
         className="container mx-auto px-6 py-12"

@@ -16,30 +16,23 @@ export default function Home() {
   const classLevels: ClassLevel[] = [
     {
       id: '1',
-      title: 'Novice',
+      title: 'Free Plan',
       description: 'Perfect for those with no prior Yoruba knowledge. Learn basic greetings and phrases.',
-      level: 'Novice',
-      price: '₦10,000/month',
+      level: 'Free Plan',
+      price: 'Free',
     },
     {
       id: '2',
-      title: 'Beginner',
+      title: 'Premium',
       description: 'For those who can speak a little but need guidance on pronunciation and basics.',
-      level: 'Beginner',
+      level: 'Premium',
       price: '₦15,000/month',
     },
     {
       id: '3',
-      title: 'Intermediate',
-      description: 'Improve sentence construction and join the Yoruba speaker community.',
-      level: 'Intermediate',
-      price: '₦20,000/month',
-    },
-    {
-      id: '4',
-      title: 'Advanced',
-      description: 'Practice regularly to maintain fluency and engage with the community.',
-      level: 'Advanced',
+      title: 'Pro+',
+      description: 'Advanced features with community access and personalized learning paths.',
+      level: 'Pro+',
       price: '₦25,000/month',
     },
   ];
@@ -60,7 +53,7 @@ export default function Home() {
     {
       id: '3',
       name: 'Tunde K.',
-      quote: 'I’ve improved my fluency and love the book club discussions!',
+      quote: "I've improved my fluency and love the book club discussions!",
       avatar: '/images/tunde.jpg',
     },
   ];
@@ -73,16 +66,19 @@ export default function Home() {
       <Header />
       {/* Hero Section */}
       <motion.section
-        className="relative bg-cover bg-center h-screen"
-        style={{ backgroundImage: "url('/images/yoruba-festival.jpg')" }}
+        className="relative h-screen overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-yoruba-red/70 to-transparent"></div>
+        <div 
+          className="absolute inset-0 bg-cover bg-center kenburns-bg"
+          style={{ backgroundImage: "url('/images/yoruba-festival.jpg')" }}
+        ></div>
+        <div className="absolute inset-0 hero-dark-overlay"></div>
         <div className="container mx-auto px-6 h-full flex flex-col justify-center items-center text-center text-white relative z-10">
           <motion.h1
-            className="text-4xl md:text-5xl font-poppins font-bold mb-4 drop-shadow-lg"
+            className="text-4xl md:text-5xl font-orbitron font-bold mb-4 drop-shadow-lg"
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -107,7 +103,7 @@ export default function Home() {
             </Link>
             <Link
               href="/newsletter"
-              className="bg-yoruba-green text-white px-6 py-3 rounded-lg hover:bg-yoruba-green/80 transition-transform transform hover:scale-105 shadow-lg"
+              className="bg-yoruba-navy text-white px-6 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-transform transform hover:scale-105 shadow-lg"
               aria-label="Subscribe to newsletter"
             >
               Subscribe to Newsletter
@@ -119,12 +115,12 @@ export default function Home() {
       {/* About Us Summary */}
       <section className="container mx-auto px-6 py-12">
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg text-center"
+          className="section-border p-8 rounded-lg text-center bg-white"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="text-3xl font-poppins font-bold text-yoruba-green mb-4">About Us</h2>
+          <h2 className="text-3xl font-exo font-bold text-yoruba-green mb-4">About Us</h2>
           <p className="text-lg font-noto text-yoruba-navy mb-4">
             Ẹwà Èdè Yorùbá Academy is dedicated to preserving and promoting Yoruba language, culture, and heritage through immersive education, cultural exchange, and community engagement.
           </p>
@@ -138,31 +134,33 @@ export default function Home() {
       </section>
 
       {/* Featured Classes Section */}
-      <section className="container mx-auto px-6 py-12 bg-adire-pattern bg-opacity-10">
-        <h2 className="text-3xl font-poppins font-bold text-yoruba-red text-center mb-8">
-          Our Classes
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {classLevels.map((classLevel) => (
-            <ClassCard key={classLevel.id} classLevel={classLevel} />
-          ))}
-        </div>
-        <div className="flex justify-center mt-8">
-          <Link href="/classes" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
-            Explore Classes
-          </Link>
+      <section className="our-classes-bg py-12">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-exo font-bold text-white text-center mb-8">
+            Our Classes
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {classLevels.map((classLevel) => (
+              <ClassCard key={classLevel.id} classLevel={classLevel} />
+            ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <Link href="/classes" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
+              Explore Classes
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Book Club Teaser */}
       <section className="container mx-auto px-6 py-12">
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg text-center"
+          className="glass-card p-8 rounded-lg text-center"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="text-3xl font-poppins font-bold text-yoruba-green mb-4">Yoruba Book Club</h2>
+          <h2 className="text-3xl font-exo font-bold text-yoruba-green mb-4">Yoruba Book Club</h2>
           <p className="text-lg font-noto text-yoruba-navy mb-4">
             Join our monthly Book Club to discuss Yoruba literature, folklore, and translated stories. Open to all levels!
           </p>
@@ -174,7 +172,7 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <section className="container mx-auto px-6 py-12">
-        <h2 className="text-3xl font-poppins font-bold text-yoruba-red text-center mb-8">
+        <h2 className="text-3xl font-exo font-bold text-yoruba-red text-center mb-8">
           What Our Students Say
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -185,12 +183,14 @@ export default function Home() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="container mx-auto px-6 py-12 bg-adire-pattern bg-opacity-10">
-        <h2 className="text-3xl font-poppins font-bold text-yoruba-red text-center mb-8">
-          Stay Updated with Yoruba Ronu
-        </h2>
-        <div className="max-w-md mx-auto">
-          <NewsletterForm onSubscribe={() => setIsModalOpen(true)} />
+      <section className="newsletter-bg py-12">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-exo font-bold text-white text-center mb-8">
+            Stay Updated with Yoruba Ronu
+          </h2>
+          <div className="max-w-md mx-auto">
+            <NewsletterForm onSubscribe={() => setIsModalOpen(true)} />
+          </div>
         </div>
       </section>
 
@@ -205,12 +205,12 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="bg-yoruba-cream/80 backdrop-blur-md p-6 rounded-lg border-2 border-yoruba-gold max-w-sm w-full">
+          <div className="glass-card p-6 rounded-lg max-w-sm w-full">
             <h3 className="text-xl font-poppins font-bold text-yoruba-green mb-4">
               Subscription Successful!
             </h3>
             <p className="text-yoruba-navy mb-4 font-noto">
-              Thank you for joining Yoruba Ronu. You’ll receive monthly updates on Yoruba culture and learning tips.
+              Thank you for joining Yoruba Ronu. You'll receive monthly updates on Yoruba culture and learning tips.
             </p>
             <button
               onClick={() => setIsModalOpen(false)}
@@ -225,4 +225,4 @@ export default function Home() {
       <Footer />
     </div>
   );
-} 
+}

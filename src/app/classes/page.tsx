@@ -11,33 +11,25 @@ import { ClassLevel } from '../../types';
 const classLevels: (ClassLevel & { icon: string })[] = [
   {
     id: '1',
-    title: 'Novice',
+    title: 'Free Plan',
     description: 'Perfect for those with no prior Yoruba knowledge. Learn basic greetings and phrases.',
-    level: 'Novice',
-    price: '₦10,000/month',
+    level: 'Free Plan',
+    price: 'Free',
     icon: '👶',
   },
   {
     id: '2',
-    title: 'Beginner',
+    title: 'Premium',
     description: 'For those who can speak a little but need guidance on pronunciation and basics.',
-    level: 'Beginner',
+    level: 'Premium',
     price: '₦15,000/month',
     icon: '🌱',
   },
   {
     id: '3',
-    title: 'Intermediate',
-    description: 'Improve sentence construction and join the Yoruba speaker community.',
-    level: 'Intermediate',
-    price: '₦20,000/month',
-    icon: '📚',
-  },
-  {
-    id: '4',
-    title: 'Advanced',
-    description: 'Practice regularly to maintain fluency and engage with the community.',
-    level: 'Advanced',
+    title: 'Pro+',
+    description: 'Advanced features with community access and personalized learning paths.',
+    level: 'Pro+',
     price: '₦25,000/month',
     icon: '🎓',
   },
@@ -51,7 +43,7 @@ const features = [
 
 export default function Classes() {
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<ClassLevel['level']>('Novice');
+  const [selectedLevel, setSelectedLevel] = useState<ClassLevel['level']>('Free Plan');
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
 
   const handleWaitlistSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,7 +53,7 @@ export default function Classes() {
   };
 
   return (
-    <div className="min-h-screen bg-adire-pattern bg-opacity-10">
+    <div className="min-h-screen non-home-bg">
       <Header />
       {/* Class Levels Section */}
       <motion.section
@@ -73,7 +65,7 @@ export default function Classes() {
         <h1 className="text-4xl md:text-5xl font-poppins font-bold text-yoruba-red text-center mb-8">
           Our Classes
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {classLevels.map((classLevel) => (
             <div key={classLevel.id} className="flex flex-col items-center">
               <span className="text-4xl mb-2">{classLevel.icon}</span>
@@ -92,7 +84,7 @@ export default function Classes() {
       {/* Group Classes Section */}
       <section className="container mx-auto px-6 py-12">
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg mb-8"
+          className="glass-card p-8 rounded-lg mb-8"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -105,7 +97,7 @@ export default function Classes() {
 
         {/* Individual Classes Section */}
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg"
+          className="glass-card p-8 rounded-lg"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -120,7 +112,7 @@ export default function Classes() {
       {/* Class Features Section */}
       <section className="container mx-auto px-6 py-12">
         <motion.div
-          className="bg-yoruba-cream/50 backdrop-blur-md p-8 rounded-lg border-2 border-yoruba-gold shadow-lg"
+          className="glass-card p-8 rounded-lg"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -149,7 +141,7 @@ export default function Classes() {
           transition={{ duration: 0.3 }}
         >
           <motion.div
-            className="bg-yoruba-cream/80 backdrop-blur-md p-6 rounded-lg border-2 border-yoruba-gold max-w-sm w-full"
+            className="glass-card p-6 rounded-lg max-w-sm w-full"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.3 }}

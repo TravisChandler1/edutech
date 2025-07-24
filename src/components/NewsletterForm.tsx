@@ -23,14 +23,14 @@ export default function NewsletterForm({ onSubscribe }: { onSubscribe?: () => vo
 
   return (
     <motion.div
-      className="bg-yoruba-cream/50 backdrop-blur-md p-6 rounded-lg border-2 border-yoruba-gold shadow-lg"
+      className="bg-white p-6 rounded-lg border-2 border-yoruba-gold shadow-lg"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h3 className="text-xl font-poppins font-bold text-yoruba-green mb-4">Join Yoruba Ronu</h3>
+      <h3 className="text-xl font-poppins font-bold text-yoruba-navy mb-4">Join Yoruba Ronu</h3>
       {submitted ? (
-        <p className="text-yoruba-green font-noto">Thank you for subscribing!</p>
+        <p className="text-yoruba-navy font-noto">Thank you for subscribing!</p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -38,7 +38,7 @@ export default function NewsletterForm({ onSubscribe }: { onSubscribe?: () => vo
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
+            className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-navy p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
             required
             aria-label="Email address"
           />

@@ -1,83 +1,40 @@
 {
   "pages": {
-    "/_not-found": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/app/_not-found-9b9c549295800b66.js"
-    ],
     "/layout": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/css/aab67006b8eaab6a.css",
-      "static/chunks/app/layout-3d0d4524c512a885.js"
-    ],
-    "/about/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/app/about/page-fbd90436c401a4f0.js"
-    ],
-    "/book-club/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/app/book-club/page-d5f45cc8a455d88d.js"
-    ],
-    "/classes/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/app/classes/page-5f1fd08b8a9b88c8.js"
-    ],
-    "/contact/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/app/contact/page-1d798d05ee72ce13.js"
-    ],
-    "/newsletter/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/app/newsletter/page-955a493a3f42536c.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
     "/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/691-c449849f190f7852.js",
-      "static/chunks/app/page-8282930050902d78.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
+    "/book-club/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/book-club/page.js"
     ],
     "/pricing/page": [
-      "static/chunks/webpack-31637be1c6978207.js",
-      "static/chunks/fd9d1056-81053e1367b49fa8.js",
-      "static/chunks/472-0b9a15f382360fcd.js",
-      "static/chunks/main-app-3494bc7e98b65911.js",
-      "static/chunks/9081a741-af4fd2267943f12e.js",
-      "static/chunks/293-f0250dd419d0ee3f.js",
-      "static/chunks/app/pricing/page-cb4c3acde5f29b05.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/pricing/page.js"
+    ],
+    "/classes/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/classes/page.js"
+    ],
+    "/newsletter/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/newsletter/page.js"
+    ],
+    "/about/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/about/page.js"
     ]
   }
 }

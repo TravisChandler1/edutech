@@ -2,7 +2,7 @@ export interface ClassLevel {
   id: string;
   title: string;
   description: string;
-  level: 'Novice' | 'Beginner' | 'Intermediate' | 'Advanced';
+  level: 'Free Plan' | 'Premium' | 'Pro+';
   price: string;
 }
 

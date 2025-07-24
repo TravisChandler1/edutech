@@ -48,7 +48,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-adire-pattern bg-opacity-10">
+    <div className="min-h-screen non-home-bg">
       <Header />
       <motion.section
         className="container mx-auto px-6 py-12"

@@ -4,7 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    <footer className="bg-yoruba-green text-white py-12 bg-adire-pattern bg-opacity-10">
+    <footer className="bg-yoruba-navy text-white py-12">
       <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <h3 className="text-xl font-poppins font-bold mb-4">Ẹwà Èdè Yorùbá</h3>

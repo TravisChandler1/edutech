@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <motion.header
-      className="bg-yoruba-green text-white py-4 px-6 sticky top-0 z-50 shadow-md"
+      className="bg-yoruba-navy text-white py-4 px-6 sticky top-0 z-50 shadow-md"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
@@ -53,7 +53,7 @@ export default function Header() {
       </div>
       {isOpen && (
         <motion.nav
-          className="md:hidden bg-yoruba-green py-4"
+          className="md:hidden bg-yoruba-navy py-4"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           transition={{ duration: 0.3 }}

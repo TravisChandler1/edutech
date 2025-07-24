@@ -1,14 +1,7 @@
 {
-  "/_not-found": "app/_not-found.js",
-  "/about/page": "app/about/page.js",
-  "/api/book-club/register/route": "app/api/book-club/register/route.js",
-  "/api/newsletter/route": "app/api/newsletter/route.js",
-  "/api/verify-payment/route": "app/api/verify-payment/route.js",
-  "/api/waitlist/route": "app/api/waitlist/route.js",
   "/book-club/page": "app/book-club/page.js",
-  "/classes/page": "app/classes/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/newsletter/page": "app/newsletter/page.js",
+  "/pricing/page": "app/pricing/page.js",
   "/page": "app/page.js",
-  "/pricing/page": "app/pricing/page.js"
+  "/classes/page": "app/classes/page.js",
+  "/about/page": "app/about/page.js"
 }

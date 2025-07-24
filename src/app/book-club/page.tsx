@@ -44,7 +44,7 @@ export default function BookClub() {
   };
 
   return (
-    <div className="min-h-screen bg-adire-pattern bg-opacity-10">
+    <div className="min-h-screen non-home-bg">
       <Header />
       {/* About Section */}
       <motion.section
@@ -193,10 +193,9 @@ export default function BookClub() {
                     aria-label="Yoruba proficiency level"
                   >
                     <option value="" disabled>Select Yoruba Level</option>
-                    <option value="Novice">Novice</option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
+                    <option value="Free Plan">Free Plan</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Pro+">Pro+</option>
                   </select>
                   <div className="flex space-x-4">
                     <button
