@@ -16,8 +16,18 @@ export default function About() {
   ];
   // Sample team data
   const team = [
-    { name: 'Dr. Adebayo O.', role: 'Lead Instructor', bio: 'Expert in Yoruba linguistics with 10+ years of teaching experience.', avatar: '/images/adebayo.jpg' },
-    { name: 'Funke A.', role: 'Cultural Ambassador', bio: 'Passionate about preserving Yoruba traditions through storytelling.', avatar: '/images/funke.jpg' },
+    { 
+      name: 'Dr. Adebayo O.', 
+      role: 'Lead Instructor', 
+      bio: 'Expert in Yoruba linguistics with 10+ years of teaching experience.', 
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face&auto=format&q=80' 
+    },
+    { 
+      name: 'Funke A.', 
+      role: 'Cultural Ambassador', 
+      bio: 'Passionate about preserving Yoruba traditions through storytelling.', 
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face&auto=format&q=80' 
+    },
   ];
 
   return (

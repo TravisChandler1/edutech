@@ -24,4 +24,13 @@ export interface Proverbs {
   id: string;
   yoruba: string;
   english: string;
-} 
+}
+
+// User account type for authentication and dashboard
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  passwordHash: string;
+  createdAt: string;
+}

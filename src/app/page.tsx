@@ -9,6 +9,8 @@ import ClassCard from '../components/ClassCard';
 import TestimonialCard from '../components/TestimonialCard';
 import NewsletterForm from '../components/NewsletterForm';
 import YorubaProverb from '../components/YorubaProverb';
+import SuccessModal from '../components/SuccessModal';
+import LoadingLink from '../components/LoadingLink';
 import { ClassLevel, Testimonial } from '../types';
 
 export default function Home() {
@@ -42,19 +44,19 @@ export default function Home() {
       id: '1',
       name: 'Adewale O.',
       quote: 'Learning Yoruba with Ẹwà Èdè has connected me to my heritage!',
-      avatar: '/images/ade.jpg',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format&q=80',
     },
     {
       id: '2',
       name: 'Funmi A.',
       quote: 'The classes are engaging, and the community is welcoming!',
-      avatar: '/images/funmi.jpg',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face&auto=format&q=80',
     },
     {
       id: '3',
       name: 'Tunde K.',
       quote: "I've improved my fluency and love the book club discussions!",
-      avatar: '/images/tunde.jpg',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format&q=80',
     },
   ];
 
@@ -94,20 +96,20 @@ export default function Home() {
             Learn Yoruba, Connect with Your Roots
           </motion.p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link
+            <LoadingLink
               href="/classes"
               className="bg-yoruba-orange text-white px-6 py-3 rounded-lg hover:bg-yoruba-orange/80 transition-transform transform hover:scale-105 shadow-lg"
               aria-label="Join a class"
             >
               Join a Class
-            </Link>
-            <Link
+            </LoadingLink>
+            <LoadingLink
               href="/newsletter"
               className="bg-yoruba-navy text-white px-6 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-transform transform hover:scale-105 shadow-lg"
               aria-label="Subscribe to newsletter"
             >
               Subscribe to Newsletter
-            </Link>
+            </LoadingLink>
           </div>
         </div>
       </motion.section>
@@ -145,9 +147,9 @@ export default function Home() {
             ))}
           </div>
           <div className="flex justify-center mt-8">
-            <Link href="/classes" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
+            <LoadingLink href="/classes" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
               Explore Classes
-            </Link>
+            </LoadingLink>
           </div>
         </div>
       </section>
@@ -164,9 +166,9 @@ export default function Home() {
           <p className="text-lg font-noto text-yoruba-navy mb-4">
             Join our monthly Book Club to discuss Yoruba literature, folklore, and translated stories. Open to all levels!
           </p>
-          <Link href="/book-club" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
+          <LoadingLink href="/book-club" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
             Join the Book Club
-          </Link>
+          </LoadingLink>
         </motion.div>
       </section>
 
@@ -198,30 +200,12 @@ export default function Home() {
       <YorubaProverb />
 
       {/* Newsletter Success Modal */}
-      {isModalOpen && (
-        <motion.div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="glass-card p-6 rounded-lg max-w-sm w-full">
-            <h3 className="text-xl font-poppins font-bold text-yoruba-green mb-4">
-              Subscription Successful!
-            </h3>
-            <p className="text-yoruba-navy mb-4 font-noto">
-              Thank you for joining Yoruba Ronu. You'll receive monthly updates on Yoruba culture and learning tips.
-            </p>
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
-              aria-label="Close modal"
-            >
-              Close
-            </button>
-          </div>
-        </motion.div>
-      )}
+      <SuccessModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Subscription Successful!"
+        message="Thank you for joining Yoruba Ronu. You'll receive monthly updates on Yoruba culture and learning tips."
+      />
       <Footer />
     </div>
   );

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import YorubaProverb from '../../components/YorubaProverb';
+import SuccessModal from '../../components/SuccessModal';
 
 const newsletterArchive = [
   { id: '1', title: 'Yoruba Ronu - January 2025', url: '/newsletters/jan-2025.pdf' },
@@ -13,6 +14,7 @@ const newsletterArchive = [
 ];
 
 export default function Newsletter() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -20,15 +22,37 @@ export default function Newsletter() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    
     if (!consent) {
       setError('You must consent to receive updates.');
       return;
     }
-    // TODO: Call /api/newsletter
-    setSubmitted(true);
-    setEmail('');
-    setConsent(false);
-    setError('');
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitted(true);
+        setName('');
+        setEmail('');
+        setConsent(false);
+        setError('');
+      } else {
+        setError(data.error || 'Failed to subscribe. Please try again.');
+      }
+    } catch (err) {
+      console.error('Newsletter subscription error:', err);
+      setError('Failed to subscribe. Please try again.');
+    }
   };
 
   return (
@@ -60,44 +84,49 @@ export default function Newsletter() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-2xl font-poppins font-bold text-yoruba-green mb-4">Subscribe to Yoruba Ronu</h2>
-          {submitted ? (
-            <p className="text-yoruba-green font-noto">Thank you for subscribing!</p>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold text-yoruba-navy placeholder-yoruba-navy/60"
+              required
+              aria-label="Full name"
+            />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold text-yoruba-navy placeholder-yoruba-navy/60"
+              required
+              aria-label="Email address"
+            />
+            <div className="flex items-center">
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                id="consent"
+                className="mr-2"
                 required
-                aria-label="Email address"
+                aria-label="Consent to receive updates"
               />
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  id="consent"
-                  className="mr-2"
-                  required
-                  aria-label="Consent to receive updates"
-                />
-                <label htmlFor="consent" className="text-yoruba-navy font-noto text-sm">
-                  I consent to receive updates and newsletters from Ẹwà Èdè Yorùbá Academy.
-                </label>
-              </div>
-              {error && <p className="text-yoruba-red text-sm font-noto">{error}</p>}
-              <motion.button
-                type="submit"
-                className="w-full bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Subscribe
-              </motion.button>
-            </form>
-          )}
+              <label htmlFor="consent" className="text-yoruba-navy font-noto text-sm">
+                I consent to receive updates and newsletters from Ẹwà Èdè Yorùbá Academy.
+              </label>
+            </div>
+            {error && <p className="text-yoruba-red text-sm font-noto">{error}</p>}
+            <motion.button
+              type="submit"
+              className="w-full bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Subscribe
+            </motion.button>
+          </form>
         </motion.div>
 
         {/* Archive Section */}
@@ -125,6 +154,14 @@ export default function Newsletter() {
         </motion.div>
       </motion.section>
       <YorubaProverb />
+      
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={submitted}
+        onClose={() => setSubmitted(false)}
+        title="Subscription Successful!"
+        message="Thank you for subscribing to Yoruba Ronu! You'll receive monthly updates on Yoruba culture, language tips, and community events."
+      />
       <Footer />
     </div>
   );

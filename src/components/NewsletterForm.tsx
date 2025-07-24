@@ -4,19 +4,36 @@ import { FormEvent, useState } from 'react';
 import { motion } from 'framer-motion';
 
 export default function NewsletterForm({ onSubscribe }: { onSubscribe?: () => void }) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError('');
+    
     try {
-      // Replace with your API endpoint
-      // await fetch('/api/newsletter', { method: 'POST', body: JSON.stringify({ email }) });
-      setEmail('');
-      setSubmitted(true);
-      if (onSubscribe) onSubscribe();
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setName('');
+        setEmail('');
+        setSubmitted(true);
+        if (onSubscribe) onSubscribe();
+      } else {
+        setError(data.error || 'Failed to subscribe. Please try again.');
+      }
     } catch (err) {
+      console.error('Newsletter subscription error:', err);
       setError('Failed to subscribe. Please try again.');
     }
   };
@@ -34,11 +51,20 @@ export default function NewsletterForm({ onSubscribe }: { onSubscribe?: () => vo
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-navy p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold text-yoruba-navy placeholder-yoruba-navy/60"
+            required
+            aria-label="Full name"
+          />
+          <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-navy p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
+            className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-navy p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold text-yoruba-navy placeholder-yoruba-navy/60"
             required
             aria-label="Email address"
           />

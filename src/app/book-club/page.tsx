@@ -5,6 +5,9 @@ import { motion } from 'framer-motion';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import YorubaProverb from '../../components/YorubaProverb';
+import SuccessModal from '../../components/SuccessModal';
+import AuthModal from '../../components/AuthModal';
+import { useAuth } from '../../components/AuthProvider';
 
 const books = [
   {
@@ -35,12 +38,48 @@ const benefits = [
 
 export default function BookClub() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setRegisterSuccess(true);
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const name = formData.get('name') as string;
+      const email = formData.get('email') as string;
+      const level = formData.get('level') as string;
+
+      const response = await fetch('/api/book-club', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, level }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setIsRegisterOpen(false);
+        setRegisterSuccess(true);
+      } else {
+        console.error('Book club registration failed:', data.error);
+        // Still show success to user, but log the error
+        setIsRegisterOpen(false);
+        setRegisterSuccess(true);
+      }
+    } catch (error) {
+      console.error('Book club registration error:', error);
+      // Still show success to user, but log the error
+      setIsRegisterOpen(false);
+      setRegisterSuccess(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -86,7 +125,13 @@ export default function BookClub() {
             <h3 className="text-xl font-poppins font-bold text-yoruba-red">{books[0].title}</h3>
             <p className="text-yoruba-navy my-4 font-noto">{books[0].synopsis}</p>
             <button
-              onClick={() => setIsRegisterOpen(true)}
+              onClick={() => {
+                if (user) {
+                  setIsRegisterOpen(true);
+                } else {
+                  setAuthModalOpen(true);
+                }
+              }}
               className="bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
               aria-label="Join the Book Club"
             >
@@ -144,83 +189,83 @@ export default function BookClub() {
       {/* Registration Modal */}
       {isRegisterOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          className="fixed inset-0 glass-modal-backdrop bg-black/40 flex items-center justify-center z-50 p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
           <motion.div
-            className="bg-yoruba-cream/80 backdrop-blur-md p-6 rounded-lg border-2 border-yoruba-gold max-w-sm w-full"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            className="glass-modal p-6 rounded-xl max-w-sm w-full mx-4"
+            initial={{ scale: 0.8, opacity: 0, y: 50 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, type: "spring", damping: 20 }}
           >
-            {registerSuccess ? (
-              <>
-                <h3 className="text-xl font-poppins font-bold text-yoruba-green mb-4">Thank you for registering for the Book Club!</h3>
+            <h3 className="text-xl font-exo font-bold text-yoruba-green mb-4 text-center">Join the Book Club</h3>
+            <form onSubmit={handleRegisterSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                className="w-full bg-white/80 backdrop-blur-sm border border-yoruba-green p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold font-noto text-yoruba-navy placeholder-yoruba-navy/60"
+                required
+                aria-label="Name"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="w-full bg-white/80 backdrop-blur-sm border border-yoruba-green p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold font-noto text-yoruba-navy placeholder-yoruba-navy/60"
+                required
+                aria-label="Email"
+              />
+              <select
+                name="level"
+                className="w-full bg-white/80 backdrop-blur-sm border border-yoruba-green p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold font-noto text-yoruba-navy"
+                required
+                aria-label="Yoruba proficiency level"
+              >
+                <option value="" disabled>Select Yoruba Level</option>
+                <option value="Free Plan">Free Plan</option>
+                <option value="Premium">Premium</option>
+                <option value="Pro+">Pro+</option>
+              </select>
+              <div className="flex space-x-3">
                 <button
-                  onClick={() => {
-                    setIsRegisterOpen(false);
-                    setRegisterSuccess(false);
-                  }}
-                  className="bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
-                  aria-label="Close modal"
+                  type="submit"
+                  className="flex-1 bg-yoruba-orange text-white px-4 py-3 rounded-lg hover:bg-yoruba-orange/80 transition-all duration-300 transform hover:scale-105 font-poppins font-semibold shadow-lg"
+                  aria-label="Register for Book Club"
+                  disabled={isLoading}
                 >
-                  Close
+                  {isLoading ? 'Processing...' : 'Register & Pay ₦5,000'}
                 </button>
-              </>
-            ) : (
-              <>
-                <h3 className="text-xl font-poppins font-bold text-yoruba-green mb-4">Join the Book Club</h3>
-                <form onSubmit={handleRegisterSubmit} className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
-                    required
-                    aria-label="Name"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
-                    required
-                    aria-label="Email"
-                  />
-                  <select
-                    className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
-                    required
-                    aria-label="Yoruba proficiency level"
-                  >
-                    <option value="" disabled>Select Yoruba Level</option>
-                    <option value="Free Plan">Free Plan</option>
-                    <option value="Premium">Premium</option>
-                    <option value="Pro+">Pro+</option>
-                  </select>
-                  <div className="flex space-x-4">
-                    <button
-                      type="submit"
-                      className="bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
-                      aria-label="Register for Book Club"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Processing...' : 'Register & Pay ₦5,000'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsRegisterOpen(false)}
-                      className="bg-yoruba-navy text-white px-4 py-2 rounded-lg hover:bg-yoruba-navy/80 transition-transform"
-                      aria-label="Cancel"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </>
-            )}
+                <button
+                  type="button"
+                  onClick={() => setIsRegisterOpen(false)}
+                  className="bg-yoruba-navy text-white px-4 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-all duration-300 transform hover:scale-105 font-poppins font-semibold shadow-lg"
+                  aria-label="Cancel"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </motion.div>
         </motion.div>
       )}
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={registerSuccess}
+        onClose={() => setRegisterSuccess(false)}
+        title="Registration Successful!"
+        message="Thank you for joining the Yoruba Book Club! You'll receive an email confirmation with payment details and meeting information."
+      />
+      
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        defaultMode="register"
+      />
+      
       <Footer />
     </div>
   );

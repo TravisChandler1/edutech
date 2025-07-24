@@ -23,28 +23,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Send admin notification
-    const adminNotification = await sendAdminNotification('classWaitlist', {
+    const adminNotification = await sendAdminNotification('bookClubRegistration', {
       name,
       email,
       level,
+      amount: '₦5,000', // Fixed amount for book club
     });
 
     if (adminNotification.success) {
       return NextResponse.json({
         success: true,
-        message: 'Waitlist registration successful',
+        message: 'Book club registration successful',
         adminNotified: true,
       });
     } else {
       console.error('Failed to send admin notification:', adminNotification.error);
       return NextResponse.json({
         success: true,
-        message: 'Waitlist registration successful, but admin notification failed',
+        message: 'Book club registration successful, but admin notification failed',
         adminNotified: false,
       });
     }
   } catch (error) {
-    console.error('Waitlist registration error:', error);
+    console.error('Book club registration error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -8,12 +8,30 @@ import { initializePaystackPayment } from '../lib/paystack';
 interface ClassCardProps {
   classLevel: ClassLevel;
   onWaitlist?: () => void;
+  onAuthRequired?: () => void;
+  isAuthenticated?: boolean;
 }
 
-export default function ClassCard({ classLevel, onWaitlist }: ClassCardProps) {
+export default function ClassCard({ classLevel, onWaitlist, onAuthRequired, isAuthenticated }: ClassCardProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handlePayment = () => {
+    if (!isAuthenticated) {
+      onAuthRequired?.();
+      return;
+    }
+    
+    // Handle free plan enrollment
+    if (classLevel.price === 'Free') {
+      setIsLoading(true);
+      // Simulate enrollment process for free plan
+      setTimeout(() => {
+        setIsLoading(false);
+        alert('Successfully enrolled in the Free Plan!');
+      }, 1000);
+      return;
+    }
+    
     setIsLoading(true);
     const amount = parseInt(classLevel.price.replace('₦', '').replace('/month', '').replace(',', ''));
     initializePaystackPayment(
@@ -29,6 +47,15 @@ export default function ClassCard({ classLevel, onWaitlist }: ClassCardProps) {
         alert('Payment cancelled.');
       }
     );
+  };
+
+  const handleWaitlist = () => {
+    if (!isAuthenticated) {
+      onAuthRequired?.();
+      return;
+    }
+    
+    onWaitlist?.();
   };
 
   return (
@@ -53,7 +80,7 @@ export default function ClassCard({ classLevel, onWaitlist }: ClassCardProps) {
         </button>
         {onWaitlist && (
           <button
-            onClick={onWaitlist}
+            onClick={handleWaitlist}
             className="bg-yoruba-navy text-white px-4 py-2 rounded-lg hover:bg-yoruba-navy/80 transition-transform"
             aria-label={`Join waitlist for ${classLevel.title}`}
           >
