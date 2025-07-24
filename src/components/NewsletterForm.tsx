@@ -1,0 +1,58 @@
+'use client';
+
+import { FormEvent, useState } from 'react';
+import { motion } from 'framer-motion';
+
+export default function NewsletterForm({ onSubscribe }: { onSubscribe?: () => void }) {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      // Replace with your API endpoint
+      // await fetch('/api/newsletter', { method: 'POST', body: JSON.stringify({ email }) });
+      setEmail('');
+      setSubmitted(true);
+      if (onSubscribe) onSubscribe();
+    } catch (err) {
+      setError('Failed to subscribe. Please try again.');
+    }
+  };
+
+  return (
+    <motion.div
+      className="bg-yoruba-cream/50 backdrop-blur-md p-6 rounded-lg border-2 border-yoruba-gold shadow-lg"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h3 className="text-xl font-poppins font-bold text-yoruba-green mb-4">Join Yoruba Ronu</h3>
+      {submitted ? (
+        <p className="text-yoruba-green font-noto">Thank you for subscribing!</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            className="w-full bg-yoruba-cream/80 backdrop-blur-sm border border-yoruba-green p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yoruba-gold"
+            required
+            aria-label="Email address"
+          />
+          {error && <p className="text-yoruba-red text-sm font-noto">{error}</p>}
+          <motion.button
+            type="submit"
+            className="w-full bg-yoruba-orange text-white px-4 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Subscribe
+          </motion.button>
+        </form>
+      )}
+    </motion.div>
+  );
+} 
