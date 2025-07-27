@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
-import pool from './db';
+import { db } from './db';
 
 export interface AuthUser {
   id: string;
@@ -23,7 +23,7 @@ export async function verifyAuth(request: NextRequest): Promise<AuthUser | null>
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
     
     // Get user from database with role and preferences
-    const result = await pool.query(
+    const result = await db.query(
       `SELECT 
         id, name, email, created_at, 
         role, selected_plan as "selectedPlan", 
@@ -60,3 +60,8 @@ export async function requireAuth(request: NextRequest): Promise<AuthUser> {
   }
   return user;
 }
+
+export const auth = {
+  verifyAuth,
+  requireAuth,
+};

@@ -1,17 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await auth();
+    const user = await auth.requireAuth(request);
     const { action } = await request.json();
     
     // Check if user is admin
-    if (!session?.user?.role || session.user.role !== 'admin') {
+    if (user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }
@@ -22,26 +22,28 @@ export async function POST(
     
     if (action === 'approve') {
       // Approve the community
-      const updatedCommunity = await db.community.update({
-        where: { id: communityId },
-        data: { 
-          isApproved: true,
-          approvedBy: session.user.id,
-          approvedAt: new Date(),
-        },
-      });
+      const result = await db.query(
+        `UPDATE communities 
+         SET is_approved = true, 
+             approved_by = $1, 
+             approved_at = CURRENT_TIMESTAMP 
+         WHERE id = $2 
+         RETURNING *`,
+        [user.id, communityId]
+      );
 
       return NextResponse.json({
         message: 'Community approved successfully',
-        community: updatedCommunity,
+        community: result.rows[0],
       });
     } 
     
     if (action === 'reject') {
       // Delete the community if rejected
-      await db.community.delete({
-        where: { id: communityId },
-      });
+      await db.query(
+        'DELETE FROM communities WHERE id = $1',
+        [communityId]
+      );
 
       return NextResponse.json({
         message: 'Community rejected and deleted successfully',
