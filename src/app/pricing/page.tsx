@@ -7,9 +7,10 @@ import Footer from '../../components/Footer';
 import YorubaProverb from '../../components/YorubaProverb';
 
 const groupPricing = [
-  { level: 'Free Plan', price: 'Free', features: ['Basic greetings and phrases', 'Community access'] },
-  { level: 'Premium', price: '₦15,000/month', features: ['Weekly group sessions', 'Community access', 'Pronunciation guidance'] },
-  { level: 'Pro+', price: '₦25,000/month', features: ['Advanced features', 'Community access', 'Personalized learning paths'] },
+  { level: 'Novice', price: 'Free', features: ['Basic greetings and phrases', 'Community access', 'Weekly group sessions'] },
+  { level: 'Beginner', price: '₦12,000/month', features: ['All Novice features', 'Interactive exercises', 'Bi-weekly group sessions', 'Audio pronunciation feedback'] },
+  { level: 'Intermediate', price: '₦18,000/month', features: ['All Beginner features', 'Advanced grammar lessons', 'Cultural context lessons', 'Progress tracking'] },
+  { level: 'Advanced', price: '₦25,000/month', features: ['All Intermediate features', 'Fluency practice sessions', 'Literature and poetry', 'Priority support'] },
 ];
 
 const individualPricing = [

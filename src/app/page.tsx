@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ClassCard from '../components/ClassCard';
@@ -11,31 +13,89 @@ import NewsletterForm from '../components/NewsletterForm';
 import YorubaProverb from '../components/YorubaProverb';
 import SuccessModal from '../components/SuccessModal';
 import LoadingLink from '../components/LoadingLink';
+import AuthModal from '@/components/AuthModal';
 import { ClassLevel, Testimonial } from '../types';
 
 export default function Home() {
+  const { currentUser, loading } = useAuth();
+  const router = useRouter();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true after component mounts
+  useEffect(() => {
+    setIsClient(true);
+    if (!loading && currentUser) {
+      router.push('/dashboard');
+    }
+  }, [loading, currentUser, router]);
+
+  // Handle visitor timer for showing auth modal
+  useEffect(() => {
+    if (isClient && !loading && !currentUser) {
+      // Set timeout to show auth modal after 20 seconds for visitors
+      const timer = setTimeout(() => {
+        setShowAuthModal(true);
+      }, 20000);
+      
+      setVisitorTimer(timer);
+      
+      return () => {
+        if (timer) clearTimeout(timer);
+      };
+    }
+    return undefined;
+  }, [currentUser, loading, isClient]);
+
+  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  };
+
+  if (loading || !isClient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-yoruba-cream">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-green"></div>
+      </div>
+    );
+  }
+
   // Sample data
   const classLevels: ClassLevel[] = [
     {
       id: '1',
-      title: 'Free Plan',
-      description: 'Perfect for those with no prior Yoruba knowledge. Learn basic greetings and phrases.',
-      level: 'Free Plan',
+      title: 'Novice',
+      description: 'Perfect for complete beginners with no prior Yoruba knowledge. Learn basic greetings and phrases.',
+      level: 'Novice',
       price: 'Free',
+      category: 'Group',
     },
     {
       id: '2',
-      title: 'Premium',
-      description: 'For those who can speak a little but need guidance on pronunciation and basics.',
-      level: 'Premium',
-      price: '₦15,000/month',
+      title: 'Beginner',
+      description: 'For those who know basic greetings and want to build foundation.',
+      level: 'Beginner',
+      price: '₦12,000/month',
+      category: 'Group',
     },
     {
       id: '3',
-      title: 'Pro+',
-      description: 'Advanced features with community access and personalized learning paths.',
-      level: 'Pro+',
+      title: 'Intermediate',
+      description: 'For learners who can form simple sentences and want to improve.',
+      level: 'Intermediate',
+      price: '₦18,000/month',
+      category: 'Group',
+    },
+    {
+      id: '4',
+      title: 'Advanced',
+      description: 'For fluent speakers who want to master cultural nuances.',
+      level: 'Advanced',
       price: '₦25,000/month',
+      category: 'Group',
     },
   ];
 
@@ -60,12 +120,66 @@ export default function Home() {
     },
   ];
 
-  // Modal state for newsletter subscription
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Hero section content based on authentication status
+  const heroContent = currentUser ? {
+    title: `Welcome back, ${currentUser.name?.split(' ')[0] || 'Learner'}!`,
+    subtitle: 'Continue your Yoruba learning journey',
+    primaryButton: {
+      text: 'Continue Learning',
+      href: '/dashboard'
+    },
+    secondaryButton: {
+      text: 'Explore Classes',
+      href: '/classes'
+    }
+  } : {
+    title: 'Discover the Beauty of Yoruba Language and Culture',
+    subtitle: 'Learn Yoruba, Connect with Your Roots',
+    primaryButton: {
+      text: 'Start Learning',
+      href: '/signup'
+    },
+    secondaryButton: {
+      text: 'Explore Features',
+      href: '#features'
+    }
+  };
+
+  // Visitor features section
+  const visitorFeatures = [
+    {
+      icon: '📚',
+      title: 'Interactive Classes',
+      description: 'Live and pre-recorded classes for all levels'
+    },
+    {
+      icon: '👥',
+      title: 'Community Learning',
+      description: 'Join discussions and practice with peers'
+    },
+    {
+      icon: '📖',
+      title: 'Ebook Library',
+      description: 'Access to our growing collection of Yoruba literature'
+    },
+    {
+      icon: '🎭',
+      title: 'Cultural Immersion',
+      description: 'Learn about Yoruba traditions and customs'
+    }
+  ];
 
   return (
     <div className="min-h-screen">
       <Header />
+      
+      {/* Registration Modal - Single AuthModal only */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        defaultMode={authModalMode}
+      />
+
       {/* Hero Section */}
       <motion.section
         className="relative h-screen overflow-hidden"
@@ -85,7 +199,7 @@ export default function Home() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            Discover the Beauty of Yoruba Language and Culture
+            {heroContent.title}
           </motion.h1>
           <motion.p
             className="text-lg md:text-xl font-poppins mb-6 drop-shadow"
@@ -93,22 +207,22 @@ export default function Home() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            Learn Yoruba, Connect with Your Roots
+            {heroContent.subtitle}
           </motion.p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <LoadingLink
-              href="/classes"
+              href={heroContent.primaryButton.href}
               className="bg-yoruba-orange text-white px-6 py-3 rounded-lg hover:bg-yoruba-orange/80 transition-transform transform hover:scale-105 shadow-lg"
-              aria-label="Join a class"
+              aria-label={heroContent.primaryButton.text}
             >
-              Join a Class
+              {heroContent.primaryButton.text}
             </LoadingLink>
             <LoadingLink
-              href="/newsletter"
-              className="bg-yoruba-navy text-white px-6 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-transform transform hover:scale-105 shadow-lg"
-              aria-label="Subscribe to newsletter"
+              href={heroContent.secondaryButton.href}
+              className="bg-yoruba-navy/90 text-white px-6 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-transform transform hover:scale-105 shadow-lg"
+              aria-label={heroContent.secondaryButton.text}
             >
-              Subscribe to Newsletter
+              {heroContent.secondaryButton.text}
             </LoadingLink>
           </div>
         </div>

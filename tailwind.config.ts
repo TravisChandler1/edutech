@@ -12,7 +12,8 @@ const config: Config = {
         'yoruba-gold': '#D4A017',
         'yoruba-cream': '#F5E8C7',
         'yoruba-orange': '#F28C38',
-        'yoruba-navy': '#1C2526',
+        'yoruba-navy': '#0f172a',
+        'yoruba-green': '#020735',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
@@ -29,4 +30,4 @@ const config: Config = {
   },
   plugins: [],
 };
-export default config; 
+export default config;

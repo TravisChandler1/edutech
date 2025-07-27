@@ -1,39 +1,52 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ClassCard from '../../components/ClassCard';
 import YorubaProverb from '../../components/YorubaProverb';
 import SuccessModal from '../../components/SuccessModal';
 import AuthModal from '../../components/AuthModal';
-import { useAuth } from '../../components/AuthProvider';
+import { useAuth } from '../../context/AuthContext';
 import { ClassLevel } from '../../types';
 
 const classLevels: (ClassLevel & { icon: string })[] = [
   {
     id: '1',
-    title: 'Free Plan',
-    description: 'Perfect for those with no prior Yoruba knowledge. Learn basic greetings and phrases.',
-    level: 'Free Plan',
+    title: 'Novice',
+    description: 'Perfect for complete beginners with no prior Yoruba knowledge. Learn basic greetings and phrases.',
+    level: 'Novice',
     price: 'Free',
-    icon: '🚀',
+    category: 'Group',
+    icon: '🌱',
   },
   {
     id: '2',
-    title: 'Premium',
-    description: 'For those who can speak a little but need guidance on pronunciation and basics.',
-    level: 'Premium',
-    price: '₦15,000/month',
-    icon: '💎',
+    title: 'Beginner',
+    description: 'For those who know basic greetings and want to build foundation.',
+    level: 'Beginner',
+    price: '₦12,000/month',
+    category: 'Group',
+    icon: '📚',
   },
   {
     id: '3',
-    title: 'Pro+',
-    description: 'Advanced features with community access and personalized learning paths.',
-    level: 'Pro+',
+    title: 'Intermediate',
+    description: 'For learners who can form simple sentences and want to improve.',
+    level: 'Intermediate',
+    price: '₦18,000/month',
+    category: 'Group',
+    icon: '🎯',
+  },
+  {
+    id: '4',
+    title: 'Advanced',
+    description: 'For fluent speakers who want to master cultural nuances.',
+    level: 'Advanced',
     price: '₦25,000/month',
+    category: 'Group',
     icon: '👑',
   },
 ];
@@ -45,11 +58,49 @@ const features = [
 ];
 
 export default function Classes() {
+  const router = useRouter();
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<ClassLevel['level']>('Free Plan');
+  const [selectedLevel, setSelectedLevel] = useState<ClassLevel['level']>('Novice');
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
-  const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
+  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
+  const { currentUser, loading } = useAuth();
+
+  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  };
+
+  useEffect(() => {
+    if (!loading && !currentUser) {
+      // Set timeout to show auth modal after 20 seconds for visitors
+      const timer = setTimeout(() => {
+        setShowAuthModal(true);
+      }, 20000);
+      setVisitorTimer(timer);
+      return () => {
+        if (visitorTimer) clearTimeout(visitorTimer);
+      };
+    }
+  }, [currentUser, loading]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-yoruba-cream">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-green"></div>
+      </div>
+    );
+  }
+
+  const handleClassSelect = (level: ClassLevel['level']) => {
+    if (!currentUser) {
+      setShowAuthModal(true);
+      return;
+    }
+    setSelectedLevel(level);
+    setIsWaitlistOpen(true);
+  };
 
   const handleWaitlistSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -90,6 +141,14 @@ export default function Classes() {
   return (
     <div className="min-h-screen non-home-bg">
       <Header />
+      
+      {/* Single Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        defaultMode={authModalMode}
+      />
+      
       {/* Class Levels Section */}
       <motion.section
         className="container mx-auto px-6 py-12"
@@ -106,12 +165,9 @@ export default function Classes() {
               <span className="text-4xl mb-2">{classLevel.icon}</span>
               <ClassCard
                 classLevel={classLevel}
-                onWaitlist={() => {
-                  setSelectedLevel(classLevel.level);
-                  setIsWaitlistOpen(true);
-                }}
-                onAuthRequired={() => setAuthModalOpen(true)}
-                isAuthenticated={!!user}
+                onWaitlist={() => handleClassSelect(classLevel.level)}
+                onAuthRequired={() => setShowAuthModal(true)}
+                isAuthenticated={!!currentUser}
               />
             </div>
           ))}
@@ -132,11 +188,11 @@ export default function Classes() {
             <p className="text-white font-noto mt-4">Schedule: Saturdays, 10am–12pm (WAT)</p>
             <button
               onClick={() => {
-                if (user) {
+                if (currentUser) {
                   // Handle group class enrollment
                   alert('Group class enrollment coming soon!');
                 } else {
-                  setAuthModalOpen(true);
+                  setShowAuthModal(true);
                 }
               }}
               className="inline-block mt-4 bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold"
@@ -166,11 +222,11 @@ export default function Classes() {
             <p className="text-white font-noto mt-4">Book a session at your convenience.</p>
             <button
               onClick={() => {
-                if (user) {
+                if (currentUser) {
                   // Handle individual class booking
                   alert('Individual class booking coming soon!');
                 } else {
-                  setAuthModalOpen(true);
+                  setShowAuthModal(true);
                 }
               }}
               className="inline-block mt-4 bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold"
@@ -276,12 +332,6 @@ export default function Classes() {
         onClose={() => setWaitlistSuccess(false)}
         title="Waitlist Registration Successful!"
         message="Thank you for joining our waitlist! We'll notify you as soon as spots become available in your selected class level."
-      />
-      
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        defaultMode="register"
       />
       
       <Footer />

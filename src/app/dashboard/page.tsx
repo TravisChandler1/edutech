@@ -2,18 +2,19 @@
 
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import CustomizedDashboard from '@/components/CustomizedDashboard';
 
 export default function Dashboard() {
-  const { user, loading, logout } = useAuth();
+  const { currentUser, loading, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !currentUser) {
       router.push('/');
     }
-  }, [user, loading, router]);
+  }, [currentUser, loading, router]);
 
   const handleLogout = async () => {
     await logout();
@@ -23,12 +24,12 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yoruba-navy to-yoruba-green flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl font-exo">Loading...</div>
       </div>
     );
   }
 
-  if (!user) {
+  if (!currentUser) {
     return null;
   }
 
@@ -38,20 +39,20 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-8 border border-yoruba-gold/20"
         >
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-exo font-bold text-yoruba-navy">
-                Welcome back, {user.name}!
+              <h1 className="text-4xl font-exo font-bold text-yoruba-navy mb-2">
+                Welcome back, {currentUser.name}!
               </h1>
-              <p className="text-gray-600 font-noto">
+              <p className="text-gray-600 font-noto text-lg">
                 Manage your learning journey and track your progress
               </p>
             </div>
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+              className="bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 hover:shadow-lg transition-all duration-300 font-semibold"
             >
               Logout
             </button>
@@ -62,65 +63,48 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-8 border border-yoruba-gold/20"
         >
-          <h2 className="text-2xl font-exo font-bold text-yoruba-navy mb-4">
+          <h2 className="text-3xl font-exo font-bold text-yoruba-navy mb-6">
             Profile Information
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <label className="block text-sm font-semibold text-yoruba-navy mb-2">
                 Full Name
               </label>
-              <p className="text-lg text-gray-900">{user.name}</p>
+              <p className="text-xl text-gray-900 font-medium">{currentUser.name}</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <label className="block text-sm font-semibold text-yoruba-navy mb-2">
                 Email Address
               </label>
-              <p className="text-lg text-gray-900">{user.email}</p>
+              <p className="text-xl text-gray-900 font-medium">{currentUser.email}</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <label className="block text-sm font-semibold text-yoruba-navy mb-2">
                 Member Since
               </label>
-              <p className="text-lg text-gray-900">
-                {new Date(user.createdAt).toLocaleDateString()}
+              <p className="text-xl text-gray-900 font-medium">
+                {new Date(currentUser.createdAt).toLocaleDateString()}
               </p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-xl">
+              <label className="block text-sm font-semibold text-yoruba-navy mb-2">
+                Account Status
+              </label>
+              <p className="text-xl text-green-600 font-medium">Active</p>
             </div>
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-lg shadow-lg p-6"
-        >
-          <h2 className="text-2xl font-exo font-bold text-yoruba-navy mb-4">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button
-              onClick={() => router.push('/classes')}
-              className="bg-yoruba-orange text-white p-4 rounded-lg hover:bg-yoruba-orange/80 transition-colors font-poppins font-semibold"
-            >
-              Browse Classes
-            </button>
-            <button
-              onClick={() => router.push('/book-club')}
-              className="bg-yoruba-green text-white p-4 rounded-lg hover:bg-yoruba-green/80 transition-colors font-poppins font-semibold"
-            >
-              Join Book Club
-            </button>
-            <button
-              onClick={() => router.push('/newsletter')}
-              className="bg-yoruba-navy text-white p-4 rounded-lg hover:bg-yoruba-navy/80 transition-colors font-poppins font-semibold"
-            >
-              Newsletter
-            </button>
-          </div>
-        </motion.div>
+        <CustomizedDashboard 
+          user={currentUser}
+          onScheduleClass={(classData) => {
+            // TODO: Implement class scheduling
+            console.log('Scheduling class:', classData);
+          }}
+        />
       </div>
     </div>
   );

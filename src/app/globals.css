@@ -10,8 +10,8 @@
   --yoruba-green: #020735;
   --yoruba-cream: #F5E8C7;
   --yoruba-orange: #F28C38;
-  --yoruba-navy: #020735;
-  --yoruba-dark-overlay: #020735cc;
+  --yoruba-navy: #0f172a;
+  --yoruba-dark-overlay: #0f172acc;
 }
 
 body {
@@ -31,6 +31,30 @@ html {
 
 .non-home-bg {
   background-color: white !important;
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--yoruba-gold) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--yoruba-gold), var(--yoruba-orange));
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, var(--yoruba-orange), var(--yoruba-red));
 }
 
 /* Section borders */
@@ -100,11 +124,27 @@ html {
   clip-path: polygon(0 0, 100% 0, 100% 60%, 95% 80%, 85% 90%, 75% 95%, 65% 90%, 55% 85%, 45% 90%, 35% 95%, 25% 90%, 15% 80%, 5% 60%, 0 40%);
 }
 
-/* Class cards - simple white background */
+/* Class cards - enhanced visibility */
 .class-card {
   background: white;
   color: var(--yoruba-navy);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(212, 160, 23, 0.2);
+}
+
+.class-card h3 {
+  color: var(--yoruba-navy) !important;
+  font-weight: 700;
+}
+
+.class-card p {
+  color: var(--yoruba-navy) !important;
+  opacity: 0.8;
+}
+
+.class-card .price {
+  color: var(--yoruba-orange) !important;
+  font-weight: 600;
 }
 
 /* Ken Burns effect for hero background */
@@ -155,21 +195,22 @@ h3, .heading-tertiary {
   letter-spacing: 0.01em;
 }
 
-/* Glass modal styles */
+/* Enhanced Glass modal styles */
 .glass-modal {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 2px solid rgba(212, 160, 23, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(212, 160, 23, 0.3);
   box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 25px 50px -12px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(212, 160, 23, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 32px rgba(242, 140, 56, 0.15);
 }
 
 .glass-modal-backdrop {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* Mobile navigation styles */
@@ -179,7 +220,7 @@ h3, .heading-tertiary {
 }
 
 .mobile-nav-content {
-  background: rgba(2, 7, 53, 0.95);
+  background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -188,4 +229,143 @@ h3, .heading-tertiary {
 .mobile-nav-open {
   overflow: hidden;
   height: 100vh;
-} 
+}
+
+/* Enhanced button styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--yoruba-orange), var(--yoruba-gold));
+  border: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(242, 140, 56, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(242, 140, 56, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: var(--yoruba-navy);
+  transform: translateY(-2px);
+}
+
+/* Green button styles for newsletter section */
+.btn-green {
+  background: var(--yoruba-green);
+  color: white;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(2, 7, 53, 0.3);
+}
+
+.btn-green:hover {
+  background: #041a5c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(2, 7, 53, 0.4);
+}
+
+/* Input field enhancements */
+.form-input {
+  transition: all 0.3s ease;
+  border: 2px solid #e5e7eb;
+}
+
+.form-input:focus {
+  border-color: var(--yoruba-orange);
+  box-shadow: 0 0 0 3px rgba(242, 140, 56, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input:hover {
+  border-color: #d1d5db;
+}
+
+/* Navbar specific styles to ensure navy blue background */
+.navbar-navy {
+  background-color: #0f172a !important;
+}
+
+/* Enhanced glass input styles for auth modal */
+.auth-glass-input {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(212, 160, 23, 0.3);
+  transition: all 0.3s ease;
+}
+
+.auth-glass-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: var(--yoruba-orange);
+  box-shadow: 0 0 0 3px rgba(242, 140, 56, 0.2);
+  transform: translateY(-1px);
+}
+
+.auth-glass-input:hover {
+  border-color: rgba(212, 160, 23, 0.5);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Enhanced glass button styles for auth modal */
+.auth-glass-button {
+  background: linear-gradient(135deg, var(--yoruba-orange), var(--yoruba-gold), var(--yoruba-red));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 25px rgba(242, 140, 56, 0.4),
+    0 4px 12px rgba(212, 160, 23, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.auth-glass-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 15px 35px rgba(242, 140, 56, 0.5),
+    0 6px 16px rgba(212, 160, 23, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Footer text visibility */
+.footer-text {
+  color: white !important;
+  opacity: 0.9;
+}
+
+.footer-link {
+  color: var(--yoruba-gold) !important;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: var(--yoruba-orange) !important;
+}
+
+/* Newsletter form styling */
+.newsletter-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.newsletter-input:focus {
+  border-color: var(--yoruba-gold);
+  background: rgba(255, 255, 255, 0.15);
+}

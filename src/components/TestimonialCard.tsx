@@ -16,15 +16,36 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
     >
       <p className="text-yoruba-navy italic font-lora mb-4">"{testimonial.quote}"</p>
       <div className="flex items-center">
-        <Image
-          src={testimonial.avatar || '/images/default-avatar.jpg'}
-          alt={`Avatar of ${testimonial.name}`}
-          width={48}
-          height={48}
-          className="rounded-full border-2 border-yoruba-gold object-cover"
-        />
+        <div className="w-12 h-12 rounded-full border-2 border-yoruba-gold bg-yoruba-cream flex items-center justify-center overflow-hidden">
+          {testimonial.avatar ? (
+            <Image
+              src={testimonial.avatar}
+              alt={`Avatar of ${testimonial.name}`}
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback to initials if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  const initials = testimonial.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                  const fallback = document.createElement('div');
+                  fallback.className = 'w-full h-full flex items-center justify-center bg-yoruba-green text-white font-bold';
+                  fallback.textContent = initials.substring(0, 2);
+                  parent.appendChild(fallback);
+                }
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-yoruba-green text-white font-bold">
+              {testimonial.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+            </div>
+          )}
+        </div>
         <p className="ml-4 font-poppins font-bold text-yoruba-green">{testimonial.name}</p>
       </div>
     </motion.div>
   );
-} 
+}

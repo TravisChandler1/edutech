@@ -6,6 +6,9 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  role: 'teacher' | 'student' | 'admin';
+  selectedPlan?: 'Novice' | 'Beginner' | 'Intermediate' | 'Advanced';
+  selectedCategory?: 'Group' | 'Individual';
   createdAt: string;
 }
 
@@ -19,9 +22,14 @@ export async function verifyAuth(request: NextRequest): Promise<AuthUser | null>
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
     
-    // Get user from database
+    // Get user from database with role and preferences
     const result = await pool.query(
-      'SELECT id, name, email, created_at FROM users WHERE id = $1',
+      `SELECT 
+        id, name, email, created_at, 
+        role, selected_plan as "selectedPlan", 
+        selected_category as "selectedCategory" 
+      FROM users 
+      WHERE id = $1`,
       [decoded.userId]
     );
 
@@ -34,6 +42,9 @@ export async function verifyAuth(request: NextRequest): Promise<AuthUser | null>
       id: user.id,
       name: user.name,
       email: user.email,
+      role: user.role || 'student', // Default to 'student' if role is not set
+      selectedPlan: user.selectedPlan || undefined,
+      selectedCategory: user.selectedCategory || undefined,
       createdAt: user.created_at
     };
   } catch (error) {

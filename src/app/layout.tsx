@@ -3,7 +3,7 @@ import '../app/globals.css';
 import type { ReactNode } from 'react';
 import Script from 'next/script';
 import { LoadingProvider } from '../components/LoadingProvider';
-import { AuthProvider } from '../components/AuthProvider';
+import { AuthProvider } from '../context/AuthContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
