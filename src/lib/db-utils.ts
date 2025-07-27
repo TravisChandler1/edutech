@@ -1,4 +1,4 @@
-import pool from './db';
+import { db as pool } from './db';
 
 // Re-export the pool for direct use
 export { pool };

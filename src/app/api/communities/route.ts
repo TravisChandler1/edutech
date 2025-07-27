@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth-utils';
+import { NextResponse, NextRequest } from 'next/server';
+import { auth } from '@/lib/auth';
 import db, { pool } from '@/lib/db-utils';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
+    const user = await auth.verifyAuth(request);
     
-    if (!session?.user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -26,11 +26,11 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
+    const user = await auth.verifyAuth(request);
     
-    if (!session?.user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -65,11 +65,11 @@ export async function POST(request: Request) {
       name,
       description,
       category,
-      creatorId: session.user.id,
+      creatorId: user.id,
     });
     
     // Add creator as a member
-    await db.addCommunityMember(newCommunity.id, session.user.id);
+    await db.addCommunityMember(newCommunity.id, user.id);
 
     // Format the response to match the expected Community interface
     const communityResponse = {
@@ -81,9 +81,9 @@ export async function POST(request: Request) {
       isApproved: newCommunity.is_approved,
       createdAt: newCommunity.created_at,
       creator: {
-        id: session.user.id,
-        name: session.user.name,
-        email: session.user.email
+        id: user.id,
+        name: user.name,
+        email: user.email
       },
       _count: {
         members: 1 // The creator is the first member

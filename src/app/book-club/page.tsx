@@ -5,7 +5,29 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '@/components/AuthModal';
 import dynamic from 'next/dynamic';
-import { BookClubSession } from '@/types';
+import { BookClubSession, Book } from '@/types';
+
+// Sample books data
+const sampleBooks: Book[] = [
+  {
+    id: '1',
+    title: 'Àkójọpọ̀ Àwọn Àlọ́ Yorùbá',
+    synopsis: 'A collection of traditional Yoruba folktales that teach moral lessons and cultural values.',
+    coverImage: '/images/yoruba-tales.jpg'
+  },
+  {
+    id: '2',
+    title: 'Ìtàn Òdùduwà',
+    synopsis: 'The legendary story of Oduduwa, the progenitor of the Yoruba people.',
+    coverImage: '/images/oduduwa-story.jpg'
+  },
+  {
+    id: '3',
+    title: 'Ewì Yorùbá Àtijọ́',
+    synopsis: 'Classical Yoruba poetry exploring themes of love, nature, and spirituality.',
+    coverImage: '/images/yoruba-poetry.jpg'
+  }
+];
 
 // Dynamically import the BookClub component with no SSR
 const BookClub = dynamic(() => import('@/components/BookClub'), {
@@ -142,6 +164,7 @@ export default function BookClubPage() {
         </div>
         <BookClub 
           user={currentUser} 
+          currentBooks={sampleBooks}
           onScheduleSession={handleScheduleSession}
         />
       </div>

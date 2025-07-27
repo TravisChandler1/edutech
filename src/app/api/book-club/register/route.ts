@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import pool from '../../../../lib/db';
+import { db as pool } from '@/lib/db';
 
 export async function POST(request: Request) {
   const { name, email, level } = await request.json();

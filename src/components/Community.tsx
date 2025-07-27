@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Community, User } from '../types';
+import type { Community } from '../types';
+import { User } from '../types';
 
 interface CommunityProps {
   user: User;

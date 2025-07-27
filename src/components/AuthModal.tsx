@@ -100,14 +100,12 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'login' }: Au
           initial={{ scale: 0.8, opacity: 0, y: 50 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.8, opacity: 0, y: 50 }}
-          style={{ 
-            y: modalY, 
-            scale: modalScale, 
-            opacity: modalOpacity 
-          }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className="relative bg-white/10 backdrop-blur-2xl rounded-3xl p-8 w-full max-w-md shadow-2xl border border-yoruba-gold/30 my-8 max-h-[90vh] overflow-y-auto"
           style={{
+            y: modalY,
+            scale: modalScale,
+            opacity: modalOpacity,
             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
