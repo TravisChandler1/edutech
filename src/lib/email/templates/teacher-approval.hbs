@@ -1,0 +1,60 @@
+<div class="content">
+    {{#if approved}}
+        <h2>🎉 Teacher Application Approved!</h2>
+        
+        <p>Hello {{name}},</p>
+        
+        <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="margin-top: 0; color: #10b981;">Welcome to the {{appName}} Teaching Community!</h3>
+            <p>Your application has been reviewed and approved. You're now part of our team of dedicated educators.</p>
+        </div>
+        
+        <p>Here's what you can do next:</p>
+        <ul style="padding-left: 20px; margin: 10px 0;">
+            <li>Set up your teacher profile</li>
+            <li>Create your first course or class</li>
+            <li>Review our teaching guidelines and resources</li>
+            <li>Join our teacher community forum</li>
+        </ul>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{dashboardUrl}}" class="button" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                Go to Teacher Dashboard
+            </a>
+        </div>
+    {{else}}
+        <h2>ℹ️ Update on Your Teacher Application</h2>
+        
+        <p>Hello {{name}},</p>
+        
+        <div style="background: rgba(249, 168, 37, 0.1); border-left: 4px solid #f9a825; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="margin-top: 0; color: #f59e0b;">Application Review Complete</h3>
+            <p>Thank you for your interest in teaching with {{appName}}. After careful consideration, we're unable to approve your application at this time.</p>
+            
+            {{#if reason}}
+            <div style="margin-top: 15px; padding: 10px; background: rgba(0, 0, 0, 0.03); border-radius: 4px;">
+                <p style="margin: 0;"><strong>Feedback:</strong> {{reason}}</p>
+            </div>
+            {{/if}}
+        </div>
+        
+        <p>You're welcome to:</p>
+        <ul style="padding-left: 20px; margin: 10px 0;">
+            <li>Update your application with additional information</li>
+            <li>Gain more teaching experience</li>
+            <li>Reapply in the future</li>
+        </ul>
+        
+        <p>If you have any questions about this decision, please don't hesitate to contact our support team.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{supportUrl}}" class="button" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                Contact Support
+            </a>
+        </div>
+    {{/if}}
+    
+    <p>Thank you for your interest in teaching with {{appName}}. We appreciate your time and effort in applying.</p>
+    
+    <p>Best regards,<br>The {{appName}} Team</p>
+</div>

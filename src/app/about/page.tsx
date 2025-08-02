@@ -3,8 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import YorubaProverb from '../../components/YorubaProverb';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+
 
 export default function About() {
   // Sample timeline data
@@ -32,7 +31,6 @@ export default function About() {
 
   return (
     <div className="min-h-screen non-home-bg">
-      <Header />
       {/* Mission & Vision */}
       <motion.section
         className="container mx-auto px-6 py-12"
@@ -138,7 +136,6 @@ export default function About() {
           Join Our Community
         </a>
       </section>
-      <Footer />
     </div>
   );
 } 

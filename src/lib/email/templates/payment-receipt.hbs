@@ -1,0 +1,47 @@
+<div class="content">
+    <h2>Payment Confirmation</h2>
+    
+    <p>Hello {{name}},</p>
+    
+    <p>Thank you for your payment! We've successfully processed your transaction. Here are the details:</p>
+    
+    <div style="background: rgba(249, 250, 251, 0.7); border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <h3 style="margin-top: 0; color: #4f46e5;">Payment Details</h3>
+        <p><strong>Transaction ID:</strong> {{transactionId}}</p>
+        <p><strong>Date:</strong> {{paymentDate}}</p>
+        <p><strong>Amount:</strong> {{amount}}</p>
+        <p><strong>Payment Method:</strong> {{paymentMethod}}</p>
+        <p><strong>Status:</strong> <span style="color: #10b981; font-weight: 500;">Completed</span></p>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            <h4>Items Purchased</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                {{#each items}}
+                <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+                    <strong>{{this.name}}</strong><br>
+                    <span style="color: #6b7280;">{{this.description}}</span>
+                    <div style="text-align: right;">{{this.amount}}</div>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb; text-align: right;">
+            <p><strong>Subtotal:</strong> {{subtotal}}</p>
+            <p><strong>Tax:</strong> {{tax}}</p>
+            <p style="font-size: 1.1em; font-weight: 600;">Total: {{total}}</p>
+        </div>
+    </div>
+    
+    <p>You can view and download a PDF copy of this receipt from your <a href="{{receiptUrl}}" style="color: #4f46e5;">account dashboard</a>.</p>
+    
+    <p>If you have any questions about your payment, please contact our billing team at <a href="mailto:{{billingEmail}}" style="color: #4f46e5; text-decoration: none;">{{billingEmail}}</a>.</p>
+    
+    <p>Thank you for choosing {{appName}}!</p>
+    
+    <p>Best regards,<br>The {{appName}} Team</p>
+    
+    <p style="font-size: 12px; color: #6b7280; margin-top: 30px;">
+        This is an automated message. Please do not reply to this email. If you have any questions, please contact our support team.
+    </p>
+</div>

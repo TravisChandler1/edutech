@@ -1,0 +1,42 @@
+<div class="content">
+    <h2>⏰ Reminder: {{className}} Starts Soon!</h2>
+    
+    <p>Hello {{studentName}},</p>
+    
+    <p>This is a friendly reminder that your class <strong>{{className}}</strong> is coming up soon.</p>
+    
+    <div style="background: rgba(249, 250, 251, 0.7); border-radius: 8px; padding: 20px; margin: 25px 0;">
+        <h3 style="margin-top: 0; color: #4f46e5;">Class Details</h3>
+        <p><strong>Date & Time:</strong> {{classDateTime}}</p>
+        <p><strong>Duration:</strong> {{duration}} minutes</p>
+        <p><strong>Instructor:</strong> {{instructorName}}</p>
+        <p><strong>Meeting Link:</strong> <a href="{{meetingLink}}" style="color: #4f46e5;">Join Class</a></p>
+        {{#if materials}}
+        <p><strong>Materials to Review:</strong> {{materials}}</p>
+        {{/if}}
+    </div>
+    
+    <p>To ensure the best experience, please:</p>
+    <ul style="padding-left: 20px; margin: 10px 0;">
+        <li>Test your audio and video before the class starts</li>
+        <li>Join 5 minutes early to resolve any technical issues</li>
+        <li>Have your materials ready</li>
+        <li>Find a quiet, well-lit space</li>
+    </ul>
+    
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="{{meetingLink}}" class="button" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+            Join Class Now
+        </a>
+    </div>
+    
+    <p>If you can't make it, please let us know at least 24 hours in advance to reschedule.</p>
+    
+    <p>We look forward to seeing you in class!</p>
+    
+    <p>Best regards,<br>The {{appName}} Team</p>
+    
+    <p style="font-size: 12px; color: #6b7280; margin-top: 30px;">
+        This is an automated reminder. To manage your notification preferences, visit your <a href="{{notificationSettingsUrl}}" style="color: #4f46e5;">account settings</a>.
+    </p>
+</div>

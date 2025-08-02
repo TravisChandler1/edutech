@@ -36,18 +36,7 @@ export default function CommunitiesPage() {
 
   const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (!loading && !currentUser) {
-      // Set timeout to show auth modal after 20 seconds for visitors
-      const timer = setTimeout(() => {
-        setShowAuthModal(true);
-      }, 20000);
-      setVisitorTimer(timer);
-      return () => {
-        if (visitorTimer) clearTimeout(visitorTimer);
-      };
-    }
-  }, [currentUser, loading]);
+  // Removed auto-popup auth modal timer
 
   if (loading) {
     return (

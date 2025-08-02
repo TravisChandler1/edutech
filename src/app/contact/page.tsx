@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+
 import YorubaProverb from '../../components/YorubaProverb';
 
 const faqs = [
@@ -49,7 +48,6 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen non-home-bg">
-      <Header />
       <motion.section
         className="container mx-auto px-6 py-12"
         initial={{ opacity: 0 }}
@@ -195,7 +193,6 @@ export default function Contact() {
         </motion.div>
       </motion.section>
       <YorubaProverb />
-      <Footer />
     </div>
   );
 } 

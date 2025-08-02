@@ -1,8 +1,8 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+import { useState } from 'react';
 import AuthModal from '@/components/AuthModal';
 import dynamic from 'next/dynamic';
 
@@ -18,29 +18,14 @@ const EbookArchive = dynamic(() => import('@/components/EbookArchive'), {
 
 export default function EbooksPage() {
   const { currentUser, loading } = useAuth();
-  const router = useRouter();
+
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
-  const [isClient, setIsClient] = useState(false);
-  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
+  const [authModalMode] = useState<'login' | 'register'>('register');
 
-  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
-    setAuthModalMode(mode);
-    setShowAuthModal(true);
-  };
 
-  useEffect(() => {
-    if (!loading && !currentUser) {
-      // Set timeout to show auth modal after 20 seconds for visitors
-      const timer = setTimeout(() => {
-        setShowAuthModal(true);
-      }, 20000);
-      setVisitorTimer(timer);
-      return () => {
-        if (visitorTimer) clearTimeout(visitorTimer);
-      };
-    }
-  }, [currentUser, loading]);
+
+
+  // Removed auto-popup auth modal timer
 
   if (loading) {
     return (

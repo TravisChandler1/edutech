@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Read the SQL file
-const sqlFile = fs.readFileSync(path.join(__dirname, '..', 'database', 'create_users_table.sql'), 'utf8');
+const sqlFile = fs.readFileSync(path.join(__dirname, '..', 'database', 'complete_schema.sql'), 'utf8');
 
 // Create a new pool
 const pool = new Pool({

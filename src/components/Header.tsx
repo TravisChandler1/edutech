@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { m as motion } from 'framer-motion';
+import { FaBars, FaTimes, FaUserShield } from 'react-icons/fa';
 import LoadingLink from './LoadingLink';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from './AuthModal';
@@ -37,13 +37,27 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
     };
   }, [isOpen]);
 
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
   const navLinks = [
     { href: '/about', label: 'About' },
-    { href: '/classes', label: 'Classes' },
-    { href: '/book-club', label: 'Book Club' },
-    { href: '/live-classes', label: 'Live Classes' },
+    { 
+      href: '/classes', 
+      label: 'Classes',
+      subLinks: [
+        { href: '/classes', label: 'All Classes' },
+        { href: '/live-classes', label: 'Live Classes' }
+      ]
+    },
+    { 
+      href: '/book-club', 
+      label: 'Book Club',
+      subLinks: [
+        { href: '/book-club', label: 'Book Club Home' },
+        { href: '/ebooks', label: 'Ebooks' }
+      ]
+    },
     { href: '/communities', label: 'Communities' },
-    { href: '/ebooks', label: 'Ebooks' },
     { href: '/pricing', label: 'Pricing' },
     { href: '/contact', label: 'Contact' },
   ];
@@ -55,58 +69,114 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
 
   return (
     <motion.header
-      className="bg-yoruba-navy navbar-navy text-white py-4 px-6 sticky top-0 z-50 shadow-lg"
-      style={{ backgroundColor: '#1e3a8a' }}
+      className="bg-yoruba-navy text-white py-4 px-6 fixed top-0 left-0 right-0 z-50 shadow-lg"
+      style={{ backgroundColor: '#0f172a' }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-2xl font-poppins font-bold hover:text-yoruba-gold transition-colors duration-300">
+      <div className="container mx-auto flex justify-between items-center relative">
+        <Link href="/" className="text-2xl font-tektur font-bold hover:text-yoruba-gold transition-colors duration-300">
           Ẹwà Èdè Yorùbá
         </Link>
-        <nav className="hidden md:flex space-x-6">
+        {/* Admin icon - positioned absolutely on mobile */}
+        <div className="md:hidden absolute right-14 top-1/2 transform -translate-y-1/2">
+          <Link 
+            href="/admin/login"
+            className="text-gray-200 hover:text-yoruba-blue transition-colors duration-200 p-2 rounded-full hover:bg-gray-100/20"
+            title="Admin Login"
+            aria-label="Admin Login"
+          >
+            <FaUserShield className="w-5 h-5" />
+          </Link>
+        </div>
+        <nav className="hidden md:flex space-x-6 items-center">
           {navLinks.map((link) => (
-            <LoadingLink
+            <div 
               key={link.href}
-              href={link.href}
-              className="hover:text-yoruba-gold transition-colors duration-300 font-medium"
+              className="relative group"
+              onMouseEnter={() => setActiveDropdown(link.href)}
+              onMouseLeave={() => setActiveDropdown(null)}
             >
-              {link.label}
-            </LoadingLink>
+              <LoadingLink
+                href={link.href}
+                className={`flex items-center text-white hover:text-yoruba-gold font-medium transition-colors duration-200 ${link.subLinks ? 'pr-4' : ''}`}
+                onClick={() => setActiveDropdown(activeDropdown === link.href ? null : link.href)}
+              >
+                {link.label}
+                {link.subLinks && (
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                )}
+              </LoadingLink>
+              {link.subLinks && (
+                <div 
+                  className={`absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 transition-all duration-200 ${activeDropdown === link.href ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+                >
+                  {link.subLinks.map((subLink) => (
+                    <LoadingLink
+                      key={subLink.href}
+                      href={subLink.href}
+                      className="block px-4 py-2 text-sm text-yoruba-navy hover:bg-yoruba-gold/10 transition-colors duration-200"
+                    >
+                      {subLink.label}
+                    </LoadingLink>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
+          <div className="hidden md:block">
+            <Link 
+              href="/admin/login"
+              className="text-gray-200 hover:text-yoruba-blue transition-colors duration-200 p-2 rounded-full hover:bg-gray-100/20"
+              title="Admin Login"
+              aria-label="Admin Login"
+            >
+              <FaUserShield className="w-5 h-5" />
+            </Link>
+          </div>
         </nav>
         {/* Auth buttons */}
         <div className="ml-4 hidden md:flex items-center space-x-4">
           {currentUser ? (
-            <div className="flex items-center space-x-4">
-              <span className="text-white font-medium">Welcome, {currentUser.name?.split(' ')[0] || 'User'}</span>
-              <Link
-                href="/dashboard"
-                className="text-yoruba-gold hover:text-white transition-colors duration-300 font-medium"
+            <div className="hidden md:flex items-center space-x-4">
+              <Link 
+                href="/admin/login"
+                className="text-yoruba-blue hover:text-yoruba-green transition-colors p-2"
+                title="Admin Login"
               >
-                Dashboard
+                <FaUserShield className="w-5 h-5" />
               </Link>
-              <button
-                onClick={logout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300 font-medium hover:shadow-lg"
-              >
-                Logout
-              </button>
+              <div className="flex items-center space-x-4">
+                <Link 
+                  href={currentUser.role === 'teacher' ? '/dashboard/teacher' : currentUser.role === 'admin' ? '/admin' : '/dashboard'} 
+                  className="text-yoruba-blue hover:text-yoruba-green transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={logout}
+                  className="bg-yoruba-red text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <button
                 onClick={() => openAuthModal('login')}
-                className="bg-transparent border-2 border-white text-white px-6 py-2 rounded-lg hover:bg-white hover:text-yoruba-navy transition-all duration-300 font-semibold"
+                className="w-full sm:w-auto text-center bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg transition-colors"
               >
                 Login
               </button>
               <button
                 onClick={() => openAuthModal('register')}
-                className="bg-gradient-to-r from-yoruba-orange to-yoruba-gold text-white px-6 py-2 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold"
+                className="w-full sm:w-auto text-center bg-yoruba-blue hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
               >
-                Join Free
+                Get Started
               </button>
             </div>
           )}
@@ -153,10 +223,10 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
             </button>
 
             {/* Logo */}
-            <div className="absolute top-6 left-6">
+            <div className="absolute top-6 left-6 right-16 flex justify-between items-center">
               <Link 
                 href="/" 
-                className="text-xl font-poppins font-bold text-white hover:text-yoruba-gold transition-colors duration-300"
+                className="text-xl font-tektur font-bold text-white hover:text-yoruba-gold transition-colors duration-300"
                 onClick={() => setIsOpen(false)}
               >
                 Ẹwà Èdè Yorùbá
@@ -164,21 +234,38 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
             </div>
 
             {/* Navigation links */}
-            <ul className="flex flex-col items-center space-y-8">
+            <ul className="flex flex-col items-center space-y-4 w-full px-4">
               {navLinks.map((link, index) => (
                 <motion.li
                   key={link.href}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 + 0.2, duration: 0.3 }}
+                  className="w-full"
                 >
-                  <LoadingLink
-                    href={link.href}
-                    className="text-2xl font-exo font-semibold text-white hover:text-yoruba-gold transition-all duration-300 transform hover:scale-110"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </LoadingLink>
+                  <div className="flex flex-col">
+                    <LoadingLink
+                      href={link.href}
+                      className="text-2xl font-exo font-semibold text-white hover:text-yoruba-gold transition-all duration-300 py-2 px-4 rounded-lg hover:bg-white/10"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </LoadingLink>
+                    {link.subLinks && (
+                      <div className="mt-1 ml-6 space-y-2">
+                        {link.subLinks.map((subLink) => (
+                          <LoadingLink
+                            key={subLink.href}
+                            href={subLink.href}
+                            className="block text-xl font-exo text-yoruba-cream/80 hover:text-yoruba-gold transition-all duration-300 py-1 px-4 rounded-lg hover:bg-white/5"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {subLink.label}
+                          </LoadingLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </motion.li>
               ))}
             </ul>
@@ -189,7 +276,7 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
                 <div className="text-center">
                   <p className="text-white mb-4">Welcome, {currentUser.name?.split(' ')[0] || 'User'}</p>
                   <Link
-                    href="/dashboard"
+                    href={currentUser.role === 'teacher' ? '/dashboard/teacher' : currentUser.role === 'admin' ? '/admin' : '/dashboard'}
                     className="block bg-yoruba-gold text-yoruba-navy py-3 px-6 rounded-lg font-semibold mb-3 hover:bg-yoruba-gold/90 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
@@ -242,9 +329,9 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
         </motion.div>
       )}
       
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
         defaultMode={authModalMode}
       />
     </motion.header>

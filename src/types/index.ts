@@ -44,7 +44,30 @@ export interface User {
   bio?: string;
   createdAt: string;
   updatedAt?: string;
+  // Teacher approval system
+  teacherApprovalStatus?: 'pending' | 'approved' | 'rejected';
+  approvedBy?: string; // Admin ID who approved
+  approvedAt?: string;
+  rejectionReason?: string;
   [key: string]: any; // Allow additional properties for flexibility
+}
+
+// Teacher approval request for admin panel
+export interface TeacherApprovalRequest {
+  id: string;
+  name: string;
+  email: string;
+  passwordHash: string;
+  selectedPlan?: 'Novice' | 'Beginner' | 'Intermediate' | 'Advanced';
+  selectedCategory?: 'Group' | 'Individual';
+  bio?: string;
+  qualifications?: string;
+  experience?: string;
+  requestedAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewedBy?: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
 }
 
 // Class scheduling for teachers

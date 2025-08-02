@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+
 import YorubaProverb from '../../components/YorubaProverb';
 
 const groupPricing = [
@@ -30,7 +29,6 @@ const paymentOptions = [
 export default function Pricing() {
   return (
     <div className="min-h-screen non-home-bg">
-      <Header />
       <motion.section
         className="container mx-auto px-6 py-12"
         initial={{ opacity: 0 }}
@@ -169,7 +167,6 @@ export default function Pricing() {
         </motion.div>
       </motion.section>
       <YorubaProverb />
-      <Footer />
     </div>
   );
 } 

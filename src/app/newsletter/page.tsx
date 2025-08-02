@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+
 import YorubaProverb from '../../components/YorubaProverb';
 import SuccessModal from '../../components/SuccessModal';
 
@@ -57,7 +56,6 @@ export default function Newsletter() {
 
   return (
     <div className="min-h-screen non-home-bg">
-      <Header />
       <motion.section
         className="container mx-auto px-6 py-12"
         initial={{ opacity: 0 }}
@@ -162,7 +160,6 @@ export default function Newsletter() {
         title="Subscription Successful!"
         message="Thank you for subscribing to Yoruba Ronu! You'll receive monthly updates on Yoruba culture, language tips, and community events."
       />
-      <Footer />
     </div>
   );
 } 

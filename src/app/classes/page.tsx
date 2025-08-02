@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+
 import ClassCard from '../../components/ClassCard';
 import YorubaProverb from '../../components/YorubaProverb';
 import SuccessModal from '../../components/SuccessModal';
@@ -72,18 +71,7 @@ export default function Classes() {
     setShowAuthModal(true);
   };
 
-  useEffect(() => {
-    if (!loading && !currentUser) {
-      // Set timeout to show auth modal after 20 seconds for visitors
-      const timer = setTimeout(() => {
-        setShowAuthModal(true);
-      }, 20000);
-      setVisitorTimer(timer);
-      return () => {
-        if (visitorTimer) clearTimeout(visitorTimer);
-      };
-    }
-  }, [currentUser, loading]);
+  // Removed auto-popup auth modal timer
 
   if (loading) {
     return (
@@ -140,7 +128,6 @@ export default function Classes() {
 
   return (
     <div className="min-h-screen non-home-bg">
-      <Header />
       
       {/* Single Auth Modal */}
       <AuthModal
@@ -333,8 +320,6 @@ export default function Classes() {
         title="Waitlist Registration Successful!"
         message="Thank you for joining our waitlist! We'll notify you as soon as spots become available in your selected class level."
       />
-      
-      <Footer />
     </div>
   );
 }

@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ClassCard from '../components/ClassCard';
 import TestimonialCard from '../components/TestimonialCard';
 import NewsletterForm from '../components/NewsletterForm';
@@ -33,22 +31,7 @@ export default function Home() {
     }
   }, [loading, currentUser, router]);
 
-  // Handle visitor timer for showing auth modal
-  useEffect(() => {
-    if (isClient && !loading && !currentUser) {
-      // Set timeout to show auth modal after 20 seconds for visitors
-      const timer = setTimeout(() => {
-        setShowAuthModal(true);
-      }, 20000);
-      
-      setVisitorTimer(timer);
-      
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
-    }
-    return undefined;
-  }, [currentUser, loading, isClient]);
+  // Removed auto-popup auth modal timer
 
   const openAuthModal = (mode: 'login' | 'register' = 'register') => {
     setAuthModalMode(mode);
@@ -170,9 +153,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      
+    <div className="w-full">
       {/* Registration Modal - Single AuthModal only */}
       <AuthModal
         isOpen={showAuthModal}
@@ -180,147 +161,155 @@ export default function Home() {
         defaultMode={authModalMode}
       />
 
-      {/* Hero Section */}
-      <motion.section
-        className="relative h-screen overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        <div 
-          className="absolute inset-0 bg-cover bg-center kenburns-bg"
-          style={{ backgroundImage: "url('/images/yoruba-festival.jpg')" }}
-        ></div>
-        <div className="absolute inset-0 hero-dark-overlay"></div>
-        <div className="container mx-auto px-6 h-full flex flex-col justify-center items-center text-center text-white relative z-10">
-          <motion.h1
-            className="text-4xl md:text-5xl font-orbitron font-bold mb-4 drop-shadow-lg"
+        {/* Hero Section */}
+        <motion.section
+          className="relative overflow-hidden w-full"
+          style={{ 
+            height: '100vh',
+            marginTop: '-80px',
+            paddingTop: '80px',
+            zIndex: 1
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div 
+            className="absolute inset-0 bg-cover bg-center kenburns-bg"
+            style={{ backgroundImage: "url('/images/yoruba-festival.jpg')" }}
+          ></div>
+          <div className="absolute inset-0 hero-dark-overlay"></div>
+          <div className="container mx-auto px-6 h-full flex flex-col justify-center items-center text-center text-white relative z-10">
+            <motion.h1
+              className="text-4xl md:text-5xl font-orbitron font-bold mb-4 drop-shadow-lg"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              {heroContent.title}
+            </motion.h1>
+            <motion.p
+              className="text-lg md:text-xl font-poppins mb-6 drop-shadow"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              {heroContent.subtitle}
+            </motion.p>
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <button
+                onClick={() => {
+                  setAuthModalMode('register');
+                  setShowAuthModal(true);
+                }}
+                className="bg-yoruba-orange text-white px-6 py-3 rounded-lg hover:bg-yoruba-orange/80 transition-transform transform hover:scale-105 shadow-lg"
+                aria-label={heroContent.primaryButton.text}
+              >
+                {heroContent.primaryButton.text}
+              </button>
+              <LoadingLink
+                href={heroContent.secondaryButton.href}
+                className="bg-yoruba-navy/90 text-white px-6 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-transform transform hover:scale-105 shadow-lg"
+                aria-label={heroContent.secondaryButton.text}
+              >
+                {heroContent.secondaryButton.text}
+              </LoadingLink>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* About Us Summary */}
+        <section className="container mx-auto px-6 py-12">
+          <motion.div
+            className="section-border p-8 rounded-lg text-center bg-white"
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            {heroContent.title}
-          </motion.h1>
-          <motion.p
-            className="text-lg md:text-xl font-poppins mb-6 drop-shadow"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            {heroContent.subtitle}
-          </motion.p>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <LoadingLink
-              href={heroContent.primaryButton.href}
-              className="bg-yoruba-orange text-white px-6 py-3 rounded-lg hover:bg-yoruba-orange/80 transition-transform transform hover:scale-105 shadow-lg"
-              aria-label={heroContent.primaryButton.text}
-            >
-              {heroContent.primaryButton.text}
-            </LoadingLink>
-            <LoadingLink
-              href={heroContent.secondaryButton.href}
-              className="bg-yoruba-navy/90 text-white px-6 py-3 rounded-lg hover:bg-yoruba-navy/80 transition-transform transform hover:scale-105 shadow-lg"
-              aria-label={heroContent.secondaryButton.text}
-            >
-              {heroContent.secondaryButton.text}
-            </LoadingLink>
-          </div>
-        </div>
-      </motion.section>
+            <h2 className="text-3xl font-exo font-bold text-yoruba-green mb-4">About Us</h2>
+            <p className="text-lg font-noto text-yoruba-navy mb-4">
+              Ẹwà Èdè Yorùbá Academy is dedicated to preserving and promoting Yoruba language, culture, and heritage through immersive education, cultural exchange, and community engagement.
+            </p>
+            {/* Video/Slideshow Placeholder */}
+            <div className="w-full flex justify-center mt-4">
+              <div className="w-full max-w-xl aspect-video bg-yoruba-navy/10 rounded-lg flex items-center justify-center border-2 border-yoruba-gold">
+                <span className="text-yoruba-gold font-lora text-lg">[Video or Slideshow Coming Soon]</span>
+              </div>
+            </div>
+          </motion.div>
+        </section>
 
-      {/* About Us Summary */}
-      <section className="container mx-auto px-6 py-12">
-        <motion.div
-          className="section-border p-8 rounded-lg text-center bg-white"
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h2 className="text-3xl font-exo font-bold text-yoruba-green mb-4">About Us</h2>
-          <p className="text-lg font-noto text-yoruba-navy mb-4">
-            Ẹwà Èdè Yorùbá Academy is dedicated to preserving and promoting Yoruba language, culture, and heritage through immersive education, cultural exchange, and community engagement.
-          </p>
-          {/* Video/Slideshow Placeholder */}
-          <div className="w-full flex justify-center mt-4">
-            <div className="w-full max-w-xl aspect-video bg-yoruba-navy/10 rounded-lg flex items-center justify-center border-2 border-yoruba-gold">
-              <span className="text-yoruba-gold font-lora text-lg">[Video or Slideshow Coming Soon]</span>
+        {/* Featured Classes Section */}
+        <section className="our-classes-bg py-12">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl font-exo font-bold text-white text-center mb-8">
+              Our Classes
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {classLevels.map((classLevel) => (
+                <ClassCard key={classLevel.id} classLevel={classLevel} />
+              ))}
+            </div>
+            <div className="flex justify-center mt-8">
+              <LoadingLink href="/classes" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
+                Explore Classes
+              </LoadingLink>
             </div>
           </div>
-        </motion.div>
-      </section>
+        </section>
 
-      {/* Featured Classes Section */}
-      <section className="our-classes-bg py-12">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-exo font-bold text-white text-center mb-8">
-            Our Classes
+        {/* Book Club Teaser */}
+        <section className="container mx-auto px-6 py-12">
+          <motion.div
+            className="glass-card p-8 rounded-lg text-center"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h2 className="text-3xl font-exo font-bold text-yoruba-green mb-4">Yoruba Book Club</h2>
+            <p className="text-lg font-noto text-yoruba-navy mb-4">
+              Join our monthly Book Club to discuss Yoruba literature, folklore, and translated stories. Open to all levels!
+            </p>
+            <LoadingLink href="/book-club" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
+              Join the Book Club
+            </LoadingLink>
+          </motion.div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="container mx-auto px-6 py-12">
+          <h2 className="text-3xl font-exo font-bold text-yoruba-red text-center mb-8">
+            What Our Students Say
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {classLevels.map((classLevel) => (
-              <ClassCard key={classLevel.id} classLevel={classLevel} />
+            {testimonials.map((testimonial) => (
+              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
             ))}
           </div>
-          <div className="flex justify-center mt-8">
-            <LoadingLink href="/classes" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
-              Explore Classes
-            </LoadingLink>
+        </section>
+
+        {/* Newsletter Section */}
+        <section className="newsletter-bg py-12">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl font-exo font-bold text-white text-center mb-8">
+              Stay Updated with Yoruba Ronu
+            </h2>
+            <div className="max-w-md mx-auto">
+              <NewsletterForm onSubscribe={() => setIsModalOpen(true)} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Book Club Teaser */}
-      <section className="container mx-auto px-6 py-12">
-        <motion.div
-          className="glass-card p-8 rounded-lg text-center"
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h2 className="text-3xl font-exo font-bold text-yoruba-green mb-4">Yoruba Book Club</h2>
-          <p className="text-lg font-noto text-yoruba-navy mb-4">
-            Join our monthly Book Club to discuss Yoruba literature, folklore, and translated stories. Open to all levels!
-          </p>
-          <LoadingLink href="/book-club" className="bg-yoruba-orange text-white px-6 py-2 rounded-lg hover:bg-yoruba-orange/80 transition-transform font-poppins font-bold shadow-lg">
-            Join the Book Club
-          </LoadingLink>
-        </motion.div>
-      </section>
+        {/* Yoruba Proverb */}
+        <YorubaProverb />
 
-      {/* Testimonials Section */}
-      <section className="container mx-auto px-6 py-12">
-        <h2 className="text-3xl font-exo font-bold text-yoruba-red text-center mb-8">
-          What Our Students Say
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
-      <section className="newsletter-bg py-12">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-exo font-bold text-white text-center mb-8">
-            Stay Updated with Yoruba Ronu
-          </h2>
-          <div className="max-w-md mx-auto">
-            <NewsletterForm onSubscribe={() => setIsModalOpen(true)} />
-          </div>
-        </div>
-      </section>
-
-      {/* Yoruba Proverb */}
-      <YorubaProverb />
-
-      {/* Newsletter Success Modal */}
-      <SuccessModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Subscription Successful!"
-        message="Thank you for joining Yoruba Ronu. You'll receive monthly updates on Yoruba culture and learning tips."
-      />
-      <Footer />
+        {/* Newsletter Success Modal */}
+        <SuccessModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Subscription Successful!"
+          message="Thank you for joining Yoruba Ronu. You'll receive monthly updates on Yoruba culture and learning tips."
+        />
     </div>
   );
 }

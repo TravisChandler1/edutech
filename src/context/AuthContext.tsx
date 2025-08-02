@@ -7,8 +7,8 @@ import { AuthUser } from '@/lib/auth';
 interface AuthContextType {
   currentUser: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, isAdmin?: boolean) => Promise<boolean>;
+  register: (name: string, email: string, password: string, additionalData?: any) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -37,9 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string, isAdmin: boolean = false): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const endpoint = isAdmin ? '/api/auth/login?admin=true' : '/api/auth/login';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -47,6 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         const data = await response.json();
+        if (isAdmin && (!data.user || data.user.role !== 'admin')) {
+          throw new Error('Access denied. Admin privileges required.');
+        }
         setCurrentUser(data.user);
         router.push('/dashboard');
         return true;
@@ -58,23 +62,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string, additionalData?: any): Promise<boolean> => {
     try {
+      console.log('Starting registration process...');
+      
+      const requestBody = { 
+        name, 
+        email, 
+        password,
+        ...additionalData
+      };
+      
+      console.log('Request body:', { ...requestBody, password: '[REDACTED]' });
+      
       const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
 
       if (response.ok) {
         const data = await response.json();
-        setCurrentUser(data.user);
+        console.log('Registration response:', data);
+        
+        if (data.user) {
+          setCurrentUser(data.user);
+          console.log('User set in context:', data.user);
+        } else if (data.requiresApproval) {
+          console.log('Teacher registration requires approval');
+          // For teacher registrations that require approval, we don't set the user
+          // but we still return true to indicate successful submission
+        }
         return true;
+      } else {
+        const errorData = await response.json();
+        console.error('Registration failed:', errorData);
+        throw new Error(errorData.error || 'Registration failed');
       }
-      return false;
     } catch (error) {
       console.error('Registration error:', error);
-      return false;
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        throw new Error('Network error: Unable to connect to server. Please check your internet connection and try again.');
+      }
+      throw error;
     }
   };
 
