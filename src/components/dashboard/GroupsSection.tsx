@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AuthUser } from '@/lib/auth';
 import { FaUsers, FaPlus, FaSearch, FaMapMarkerAlt, FaClock, FaUserFriends, FaComments, FaCalendarAlt } from 'react-icons/fa';
@@ -35,7 +35,9 @@ export default function GroupsSection({ user }: GroupsSectionProps) {
   const [filterLevel, setFilterLevel] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterLocation, setFilterLocation] = useState<string>('all');
-
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [newGroup, setNewGroup] = useState({
     name: '',
@@ -48,103 +50,71 @@ export default function GroupsSection({ user }: GroupsSectionProps) {
     isPrivate: false
   });
 
-  const studyGroups: StudyGroup[] = [
-    {
-      id: '1',
-      name: 'Lagos Yoruba Learners',
-      description: 'A vibrant community of Yoruba learners in Lagos. We meet weekly to practice conversation and explore Yoruba culture.',
-      creator: 'Adebayo Ogundimu',
-      level: 'Beginner',
-      category: 'Conversation',
-      location: 'Lagos',
-      members: 8,
-      maxMembers: 15,
-      meetingSchedule: 'Every Saturday, 2:00 PM',
-      nextMeeting: '2024-01-20T14:00:00',
-      isPrivate: false,
-      isMember: true,
-      isCreator: false,
-      tags: ['conversation', 'culture', 'beginner-friendly'],
-      createdAt: '2023-12-01',
-      lastActivity: '2024-01-12'
-    },
-    {
-      id: '2',
-      name: 'Advanced Grammar Masters',
-      description: 'For serious learners who want to master complex Yoruba grammar structures and linguistic nuances.',
-      creator: 'Dr. Folake Adeyemi',
-      level: 'Advanced',
-      category: 'Grammar',
-      location: 'Online',
-      members: 5,
-      maxMembers: 8,
-      meetingSchedule: 'Tuesdays & Thursdays, 7:00 PM',
-      nextMeeting: '2024-01-16T19:00:00',
-      isPrivate: true,
-      isMember: true,
-      isCreator: false,
-      tags: ['grammar', 'advanced', 'linguistics'],
-      createdAt: '2023-11-15',
-      lastActivity: '2024-01-14'
-    },
-    {
-      id: '3',
-      name: 'Yoruba Book Club Online',
-      description: 'Reading and discussing classic and contemporary Yoruba literature together.',
-      creator: 'Kemi Olatunji',
-      level: 'Intermediate',
-      category: 'Reading',
-      location: 'Online',
-      members: 12,
-      maxMembers: 20,
-      meetingSchedule: 'First Sunday of every month, 4:00 PM',
-      nextMeeting: '2024-02-04T16:00:00',
-      isPrivate: false,
-      isMember: false,
-      isCreator: false,
-      tags: ['reading', 'literature', 'discussion'],
-      createdAt: '2023-10-20',
-      lastActivity: '2024-01-10'
-    },
-    {
-      id: '4',
-      name: 'Abuja Cultural Circle',
-      description: 'Exploring Yoruba traditions, festivals, and cultural practices while learning the language.',
-      creator: 'Baba Wande Abimbola',
-      level: 'Beginner',
-      category: 'Culture',
-      location: 'Abuja',
-      members: 6,
-      maxMembers: 12,
-      meetingSchedule: 'Every other Friday, 6:30 PM',
-      nextMeeting: '2024-01-19T18:30:00',
-      isPrivate: false,
-      isMember: false,
-      isCreator: false,
-      tags: ['culture', 'traditions', 'festivals'],
-      createdAt: '2023-12-10',
-      lastActivity: '2024-01-11'
-    },
-    {
-      id: '5',
-      name: 'My Study Group',
-      description: 'A small group I created for intensive Yoruba practice with close friends.',
-      creator: user.name || 'You',
-      level: 'Intermediate',
-      category: 'General',
-      location: 'Online',
-      members: 4,
-      maxMembers: 6,
-      meetingSchedule: 'Wednesdays, 8:00 PM',
-      nextMeeting: '2024-01-17T20:00:00',
-      isPrivate: true,
-      isMember: true,
-      isCreator: true,
-      tags: ['practice', 'friends', 'intensive'],
-      createdAt: '2024-01-01',
-      lastActivity: '2024-01-13'
+  useEffect(() => {
+    fetchDashboardData();
+  }, [user.id]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/dashboard/user?userId=${user.id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setDashboardData(data);
+      } else {
+        setError(data.error || 'Failed to fetch dashboard data');
+      }
+    } catch (err) {
+      setError('Failed to load dashboard data');
+      console.error('Dashboard data fetch error:', err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-gold"></div>
+      </div>
+    );
+  }
+
+  if (error || !dashboardData) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-white/80 mb-4">Unable to load groups data</p>
+        <button 
+          onClick={fetchDashboardData}
+          className="bg-yoruba-gold text-yoruba-navy px-4 py-2 rounded-lg hover:bg-yoruba-gold/90 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // Use real groups data from API
+  const studyGroups: StudyGroup[] = dashboardData.groups.map((group: any) => ({
+    id: group.id,
+    name: group.name,
+    description: group.description,
+    creator: group.creator_name || 'Unknown',
+    level: group.level || 'Beginner',
+    category: group.category || 'General',
+    location: group.location || 'Online',
+    members: group.member_count || 0,
+    maxMembers: group.max_members || 10,
+    meetingSchedule: group.meeting_schedule || 'To be determined',
+    nextMeeting: group.next_meeting || new Date().toISOString(),
+    isPrivate: group.is_private || false,
+    isMember: true, // Since they're in dashboardData.groups, they're a member
+    isCreator: group.member_role === 'creator',
+    tags: group.tags || [],
+    createdAt: group.created_at,
+    lastActivity: group.last_activity || group.created_at
+  }));
 
   const filteredGroups = studyGroups.filter(group => {
     const searchMatch = group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -527,8 +497,10 @@ export default function GroupsSection({ user }: GroupsSectionProps) {
 
       {/* Groups Grid */}
       {(activeTab === 'discover' || activeTab === 'my-groups') && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGroups.map((group, index) => (
+        <div>
+          {filteredGroups.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredGroups.map((group, index) => (
             <motion.div
               key={group.id}
               initial={{ opacity: 0, y: 20 }}
@@ -624,8 +596,45 @@ export default function GroupsSection({ user }: GroupsSectionProps) {
                   )}
                 </div>
               </div>
-            </motion.div>
-          ))}
+              </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <FaUsers className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              {activeTab === 'my-groups' ? (
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">You are not in any group currently</h3>
+                  <p className="text-white/70 mb-6">Join existing groups or create your own to start learning with others!</p>
+                  <div className="space-y-3 max-w-sm mx-auto">
+                    <button 
+                      onClick={() => setActiveTab('discover')}
+                      className="w-full bg-yoruba-gold text-yoruba-navy px-6 py-3 rounded-lg hover:bg-yoruba-gold/90 transition-colors font-medium"
+                    >
+                      Browse Available Groups
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('create')}
+                      className="w-full bg-yoruba-blue text-white px-6 py-3 rounded-lg hover:bg-yoruba-blue/90 transition-colors font-medium"
+                    >
+                      Create Your Own Group
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">No groups found</h3>
+                  <p className="text-white/70 mb-6">Try adjusting your search filters or create a new group!</p>
+                  <button 
+                    onClick={() => setActiveTab('create')}
+                    className="bg-yoruba-gold text-yoruba-navy px-6 py-3 rounded-lg hover:bg-yoruba-gold/90 transition-colors font-medium"
+                  >
+                    Create New Group
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

@@ -130,9 +130,15 @@ export default function Classes() {
         <h1 className="text-4xl md:text-5xl font-poppins font-bold text-yoruba-red text-center mb-8">
           Our Classes
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {classLevels.map((classLevel) => (
-            <div key={classLevel.id} className="flex flex-col items-center">
+            <motion.div 
+              key={classLevel.id} 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: parseInt(classLevel.id) * 0.1 }}
+            >
               <span className="text-4xl mb-2">{classLevel.icon}</span>
               <ClassCard
                 classLevel={classLevel}
@@ -140,7 +146,7 @@ export default function Classes() {
                 onAuthRequired={() => setShowAuthModal(true)}
                 isAuthenticated={!!currentUser}
               />
-            </div>
+            </motion.div>
           ))}
         </div>
       </motion.section>

@@ -144,32 +144,46 @@ export async function POST(request: NextRequest) {
           requiresApproval: true,
           request: {
             id: request.id,
-            name: request.name,
-            email: request.email,
-            requestedAt: request.requested_at
+            name: request.name
           }
         });
-      } catch (teacherError) {
-        console.error('Error creating teacher approval request:', teacherError);
+      } catch (error) {
+        console.error('Error creating teacher approval request:', error);
         return NextResponse.json({ error: 'Failed to create teacher approval request' }, { status: 500 });
       }
     } else {
+      // Handle student registration
       console.log('Creating student account...');
       
+      const client = await pool.connect();
       try {
-        const result = await pool.query(
-          `INSERT INTO users 
-           (name, email, password_hash, role, selected_plan, selected_category, status, created_at) 
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-           RETURNING id, name, email, role, selected_plan, selected_category, created_at`,
-          [name, email, passwordHash, 'student', selectedPlan, selectedCategory, 'active', createdAt]
+        await client.query('BEGIN');
+        
+        // Insert user
+        const userResult = await client.query(
+          `INSERT INTO users (
+            name, email, password_hash, role, status, email_verified, 
+            selected_plan, selected_category, payment_status
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+          RETURNING id, name, email, role, status, email_verified, selected_plan, selected_category, created_at`,
+          [
+            name,
+            email,
+            passwordHash, // Use passwordHash instead of hashedPassword
+            'student',
+            'active',
+            false,
+            selectedPlan || 'Novice',
+            selectedCategory || 'Group',
+            'pending'
+          ]
         );
 
-        const user = result.rows[0];
-        console.log('Student account created:', user.id);
+        const user = userResult.rows[0];
+        await client.query('COMMIT');
         
-        return NextResponse.json({ 
-          success: true, 
+        return NextResponse.json({
+          success: true,
           message: 'Student account created successfully',
           requiresApproval: false,
           user: {
@@ -183,8 +197,11 @@ export async function POST(request: NextRequest) {
           }
         });
       } catch (studentError) {
+        await client.query('ROLLBACK');
         console.error('Error creating student account:', studentError);
         return NextResponse.json({ error: 'Failed to create student account' }, { status: 500 });
+      } finally {
+        client.release();
       }
     }
   } catch (error) {

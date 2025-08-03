@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { m as motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FaBars, FaTimes, FaUserShield } from 'react-icons/fa';
 import LoadingLink from './LoadingLink';
 import { useAuth } from '@/context/AuthContext';
@@ -61,11 +61,6 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
     { href: '/pricing', label: 'Pricing' },
     { href: '/contact', label: 'Contact' },
   ];
-
-  // Add admin link if user is admin
-  if (currentUser?.role === 'admin') {
-    navLinks.push({ href: '/admin', label: 'Admin' });
-  }
 
   return (
     <motion.header
@@ -127,54 +122,46 @@ export default function Header({ defaultAuthMode = 'login' }: HeaderProps) {
               )}
             </div>
           ))}
-          <div className="hidden md:block">
-            <Link 
-              href="/admin/login"
-              className="text-gray-200 hover:text-yoruba-blue transition-colors duration-200 p-2 rounded-full hover:bg-gray-100/20"
-              title="Admin Login"
-              aria-label="Admin Login"
-            >
-              <FaUserShield className="w-5 h-5" />
-            </Link>
-          </div>
         </nav>
-        {/* Auth buttons */}
+        
+        {/* Auth buttons and user controls */}
         <div className="ml-4 hidden md:flex items-center space-x-4">
           {currentUser ? (
-            <div className="hidden md:flex items-center space-x-4">
-              <Link 
-                href="/admin/login"
-                className="text-yoruba-blue hover:text-yoruba-green transition-colors p-2"
-                title="Admin Login"
-              >
-                <FaUserShield className="w-5 h-5" />
-              </Link>
-              <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
+              {currentUser.role === 'admin' && (
                 <Link 
-                  href={currentUser.role === 'teacher' ? '/dashboard/teacher' : currentUser.role === 'admin' ? '/admin' : '/dashboard'} 
-                  className="text-yoruba-blue hover:text-yoruba-green transition-colors"
+                  href="/admin"
+                  className="text-yoruba-gold hover:text-yoruba-cream transition-colors duration-200 flex items-center space-x-1"
+                  title="Admin Panel"
                 >
-                  Dashboard
+                  <FaUserShield className="w-4 h-4" />
+                  <span>Admin</span>
                 </Link>
-                <button
-                  onClick={logout}
-                  className="bg-yoruba-red text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
+              )}
+              <Link 
+                href={currentUser.role === 'teacher' ? '/dashboard/teacher' : currentUser.role === 'admin' ? '/admin' : '/dashboard'} 
+                className="text-yoruba-gold hover:text-yoruba-cream transition-colors duration-200"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={logout}
+                className="bg-yoruba-red text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
+              >
+                Logout
+              </button>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex items-center space-x-3">
               <button
                 onClick={() => openAuthModal('login')}
-                className="w-full sm:w-auto text-center bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg transition-colors"
+                className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg transition-colors duration-200"
               >
                 Login
               </button>
               <button
                 onClick={() => openAuthModal('register')}
-                className="w-full sm:w-auto text-center bg-yoruba-blue hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
+                className="bg-yoruba-blue hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors duration-200"
               >
                 Get Started
               </button>

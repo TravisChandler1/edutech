@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AuthUser } from '@/lib/auth';
 import { FaBook, FaCalendarAlt, FaUsers, FaStar } from 'react-icons/fa';
@@ -29,60 +29,96 @@ interface Book {
 
 export default function BookClubSection({ user }: BookClubSectionProps) {
   const [activeTab, setActiveTab] = useState<'current' | 'upcoming' | 'completed'>('current');
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const books: Book[] = [
+  useEffect(() => {
+    fetchDashboardData();
+  }, [user.id]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/dashboard/user?userId=${user.id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setDashboardData(data);
+      } else {
+        setError(data.error || 'Failed to fetch dashboard data');
+      }
+    } catch (err) {
+      setError('Failed to load dashboard data');
+      console.error('Dashboard data fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-gold"></div>
+      </div>
+    );
+  }
+
+  if (error || !dashboardData) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-white/80 mb-4">Unable to load book club data</p>
+        <button 
+          onClick={fetchDashboardData}
+          className="bg-yoruba-gold text-yoruba-navy px-4 py-2 rounded-lg hover:bg-yoruba-gold/90 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // Use real book club sessions data from API
+  const books: Book[] = dashboardData.bookClubSessions.map((session: any) => ({
+    id: session.id,
+    title: session.book_title || 'Untitled Book',
+    author: session.author || 'Unknown Author',
+    description: session.description || 'No description available',
+    coverImage: session.cover_image || '/images/books/default-book.jpg',
+    discussionDate: session.scheduled_time ? new Date(session.scheduled_time).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    discussionTime: session.scheduled_time ? new Date(session.scheduled_time).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '19:00',
+    participants: session.current_participants || 0,
+    maxParticipants: session.max_participants || 20,
+    status: session.status === 'scheduled' ? 'upcoming' : session.status === 'active' ? 'ongoing' : 'completed',
+    difficulty: session.difficulty || 'Beginner',
+    chapters: session.total_chapters || 10,
+    currentChapter: session.current_chapter || 1,
+    rating: session.rating || 4.0,
+    reviews: session.review_count || 0
+  }));
+
+  // Use fallback books if no real data exists
+  const displayBooks: Book[] = books.length === 0 ? [
     {
-      id: '1',
+      id: 'sample-1',
       title: 'Ogboju Ode Ninu Igbo Irunmale',
       author: 'D.O. Fagunwa',
       description: 'A classic Yoruba novel about a brave hunter\'s adventures in the forest of spirits.',
       coverImage: '/images/books/ogboju-ode.jpg',
-      discussionDate: '2024-01-15',
+      discussionDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       discussionTime: '19:00',
-      participants: 15,
+      participants: 0,
       maxParticipants: 20,
-      status: 'ongoing',
+      status: 'upcoming',
       difficulty: 'Intermediate',
       chapters: 12,
-      currentChapter: 5,
+      currentChapter: 1,
       rating: 4.8,
       reviews: 24
-    },
-    {
-      id: '2',
-      title: 'Àkójọpọ̀ Àwọn Àlọ́ Yorùbá',
-      author: 'Various Authors',
-      description: 'A collection of traditional Yoruba folktales and stories.',
-      coverImage: '/images/books/yoruba-tales.jpg',
-      discussionDate: '2024-01-22',
-      discussionTime: '18:30',
-      participants: 8,
-      maxParticipants: 15,
-      status: 'upcoming',
-      difficulty: 'Beginner',
-      chapters: 20,
-      rating: 4.5,
-      reviews: 18
-    },
-    {
-      id: '3',
-      title: 'Ìrètí Ayé',
-      author: 'Akinwumi Isola',
-      description: 'A modern Yoruba novel exploring themes of hope and resilience.',
-      coverImage: '/images/books/ireti-aye.jpg',
-      discussionDate: '2024-01-08',
-      discussionTime: '19:30',
-      participants: 12,
-      maxParticipants: 12,
-      status: 'completed',
-      difficulty: 'Advanced',
-      chapters: 15,
-      rating: 4.9,
-      reviews: 31
     }
-  ];
+  ] : books;
 
-  const filteredBooks = books.filter(book => book.status === activeTab);
+  const filteredBooks = displayBooks.filter(book => book.status === activeTab);
 
   const upcomingDiscussions = [
     {
@@ -199,8 +235,10 @@ export default function BookClubSection({ user }: BookClubSectionProps) {
       </div>
 
       {/* Books Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredBooks.map((book, index) => (
+      <div>
+        {filteredBooks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredBooks.map((book, index) => (
           <motion.div
             key={book.id}
             initial={{ opacity: 0, y: 20 }}
@@ -290,26 +328,31 @@ export default function BookClubSection({ user }: BookClubSectionProps) {
               </button>
             </div>
           </motion.div>
-        ))}
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <FaBook className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">
+              {activeTab === 'current' && 'No books currently being discussed'}
+              {activeTab === 'upcoming' && 'No upcoming book discussions'}
+              {activeTab === 'completed' && 'No completed book discussions yet'}
+            </h3>
+            <p className="text-white/70 mb-6">
+              {activeTab === 'current' && 'Join the book club to start reading and discussing with others!'}
+              {activeTab === 'upcoming' && 'Check back later for new book discussions or suggest a book.'}
+              {activeTab === 'completed' && 'Complete your first book discussion to see it here.'}
+            </p>
+            <button className="bg-yoruba-gold text-yoruba-navy px-6 py-3 rounded-lg hover:bg-yoruba-gold/90 transition-colors font-medium">
+              Browse Book Club
+            </button>
+          </motion.div>
+        )}
       </div>
-
-      {filteredBooks.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-12"
-        >
-          <FaBook className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-500 mb-2">
-            No {activeTab} books found
-          </h3>
-          <p className="text-gray-400">
-            {activeTab === 'current' && 'No books are currently being discussed.'}
-            {activeTab === 'upcoming' && 'No upcoming book discussions scheduled.'}
-            {activeTab === 'completed' && 'No completed book discussions yet.'}
-          </p>
-        </motion.div>
-      )}
     </div>
   );
 }

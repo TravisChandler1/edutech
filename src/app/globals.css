@@ -36,9 +36,18 @@ body, html {
 
 /* Ensure header is always visible */
 header {
-  position: sticky !important;
+  position: fixed !important;
   top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
   z-index: 50 !important;
+  height: 72px; /* Match this with your header's actual height */
+}
+
+/* Add padding to main content to account for fixed header */
+main {
+  padding-top: 72px; /* Match this with header height */
+  min-height: calc(100vh - 72px); /* Account for header height in min-height */
 }
 
 *:focus {

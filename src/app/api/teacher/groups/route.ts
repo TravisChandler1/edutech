@@ -88,24 +88,57 @@ export async function POST(request: Request) {
     );
 
     const group = groupResult.rows[0];
+    const now = new Date().toISOString();
 
-    // Add students to the group
+    // Add the creator as an admin member
+    await db.query(
+      `INSERT INTO group_members (group_id, user_id, role, joined_at, user_name, user_email)
+       VALUES ($1, $2, 'admin', $3, $4, $5)
+       ON CONFLICT (group_id, user_id) DO UPDATE 
+       SET role = EXCLUDED.role, 
+           joined_at = EXCLUDED.joined_at`,
+      [group.id, user.id, now, user.name || 'Unknown', user.email || '']
+    );
+
+    // Add other students to the group if provided
     if (studentIds && studentIds.length > 0) {
-      const values = studentIds.map((_studentId: string, index: number) => 
-        `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`
-      ).join(',');
-      
-      const params = studentIds.flatMap((studentId: string) => [
-        group.id, 
-        studentId,
-        new Date().toISOString()
-      ]);
-
-      await db.query(
-        `INSERT INTO group_members (group_id, user_id, joined_at)
-         VALUES ${values} ON CONFLICT DO NOTHING`,
-        params
+      // Get user details for the student IDs
+      const userDetailsQuery = await db.query(
+        `SELECT id, name, email FROM users WHERE id = ANY($1::text[])`,
+        [studentIds]
       );
+      
+      const userDetails = new Map(
+        userDetailsQuery.rows.map((row: any) => [row.id, row])
+      );
+      
+      // Filter out any invalid user IDs
+      const validStudentIds = studentIds.filter((id: string) => userDetails.has(id));
+      
+      if (validStudentIds.length > 0) {
+        const values = validStudentIds.map((_studentId: string, index: number) => 
+          `($${index * 4 + 1}, $${index * 4 + 2}, 'member', $${index * 4 + 3}, $${index * 4 + 4}, $${index * 4 + 5})`
+        ).join(',');
+        
+        const params = validStudentIds.flatMap((studentId: string) => {
+          const user = userDetails.get(studentId);
+          return [
+            group.id, 
+            studentId,
+            now,
+            user?.name || 'Unknown User',
+            user?.email || '',
+            now
+          ];
+        });
+
+        await db.query(
+          `INSERT INTO group_members (group_id, user_id, role, joined_at, user_name, user_email, last_seen)
+           VALUES ${values} 
+           ON CONFLICT (group_id, user_id) DO NOTHING`,
+          params
+        );
+      }
     }
 
     await db.query('COMMIT');

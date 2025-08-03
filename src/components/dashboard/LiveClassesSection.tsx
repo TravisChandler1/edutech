@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AuthUser } from '@/lib/auth';
 import { FaVideo, FaCalendarAlt, FaUsers, FaClock, FaPlay, FaBookmark, FaGraduationCap } from 'react-icons/fa';
@@ -32,10 +32,79 @@ export default function LiveClassesSection({ user }: LiveClassesSectionProps) {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'live' | 'booked' | 'completed'>('upcoming');
   const [filterLevel, setFilterLevel] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const classes: LiveClass[] = [
+  useEffect(() => {
+    fetchDashboardData();
+  }, [user.id]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/dashboard/user?userId=${user.id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setDashboardData(data);
+      } else {
+        setError(data.error || 'Failed to fetch dashboard data');
+      }
+    } catch (err) {
+      setError('Failed to load dashboard data');
+      console.error('Dashboard data fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-gold"></div>
+      </div>
+    );
+  }
+
+  if (error || !dashboardData) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-white/80 mb-4">Unable to load live classes data</p>
+        <button 
+          onClick={fetchDashboardData}
+          className="bg-yoruba-gold text-yoruba-navy px-4 py-2 rounded-lg hover:bg-yoruba-gold/90 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  // Use real live classes data from API
+  const classes: LiveClass[] = dashboardData.liveClasses.map((liveClass: any) => ({
+    id: liveClass.id,
+    title: liveClass.title || 'Untitled Class',
+    instructor: liveClass.instructor_name || 'Unknown Instructor',
+    description: liveClass.description || 'No description available',
+    level: liveClass.level || 'Beginner',
+    category: liveClass.category || 'Group',
+    date: liveClass.scheduled_time ? new Date(liveClass.scheduled_time).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    time: liveClass.scheduled_time ? new Date(liveClass.scheduled_time).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '19:00',
+    duration: liveClass.duration || 90,
+    participants: liveClass.current_participants || 0,
+    maxParticipants: liveClass.max_participants || 20,
+    status: liveClass.status === 'scheduled' ? 'upcoming' : liveClass.status === 'active' ? 'live' : 'completed',
+    price: liveClass.price || 5000,
+    topics: liveClass.topics ? liveClass.topics.split(',') : ['Yoruba Language'],
+    meetingLink: liveClass.meeting_link,
+    recordingLink: liveClass.recording_link
+  }));
+
+  // Add fallback classes if no real data exists
+  const displayClasses: LiveClass[] = classes.length === 0 ? [
     {
-      id: '1',
+      id: 'sample-1',
       title: 'Yoruba Grammar Fundamentals',
       instructor: 'Prof. Adebayo Ogundimu',
       description: 'Learn the basic grammar structures of Yoruba language including sentence formation and verb conjugation.',
@@ -100,9 +169,9 @@ export default function LiveClassesSection({ user }: LiveClassesSectionProps) {
       topics: ['Yoruba Alphabet', 'Diacritical Marks', 'Basic Writing', 'Reading Practice'],
       recordingLink: 'https://recordings.example.com/yoruba-writing-intro'
     }
-  ];
+  ] : classes;
 
-  const filteredClasses = classes.filter(cls => {
+  const filteredClasses = displayClasses.filter(cls => {
     const statusMatch = activeTab === 'booked' ? ['upcoming', 'live'].includes(cls.status) : cls.status === activeTab;
     const levelMatch = filterLevel === 'all' || cls.level === filterLevel;
     const categoryMatch = filterCategory === 'all' || cls.category === filterCategory;
@@ -286,8 +355,10 @@ export default function LiveClassesSection({ user }: LiveClassesSectionProps) {
       </div>
 
       {/* Classes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredClasses.map((cls, index) => (
+      <div>
+        {filteredClasses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredClasses.map((cls, index) => (
           <motion.div
             key={cls.id}
             initial={{ opacity: 0, y: 20 }}
@@ -413,24 +484,33 @@ export default function LiveClassesSection({ user }: LiveClassesSectionProps) {
               </button>
             </div>
           </motion.div>
-        ))}
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <FaVideo className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">
+              {activeTab === 'upcoming' && 'No upcoming classes'}
+              {activeTab === 'live' && 'No live classes right now'}
+              {activeTab === 'booked' && 'No booked classes'}
+              {activeTab === 'completed' && 'No completed classes yet'}
+            </h3>
+            <p className="text-white/70 mb-6">
+              {activeTab === 'upcoming' && 'Browse available classes and enroll to start learning!'}
+              {activeTab === 'live' && 'Check back later for live sessions or browse upcoming classes.'}
+              {activeTab === 'booked' && 'Enroll in classes to see them here.'}
+              {activeTab === 'completed' && 'Complete your first class to see it here.'}
+            </p>
+            <button className="bg-yoruba-gold text-yoruba-navy px-6 py-3 rounded-lg hover:bg-yoruba-gold/90 transition-colors font-medium">
+              Browse Live Classes
+            </button>
+          </motion.div>
+        )}
       </div>
-
-      {filteredClasses.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-12"
-        >
-          <FaVideo className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-500 mb-2">
-            No classes found
-          </h3>
-          <p className="text-gray-400">
-            Try adjusting your filters or check back later for new classes.
-          </p>
-        </motion.div>
-      )}
     </div>
   );
 }

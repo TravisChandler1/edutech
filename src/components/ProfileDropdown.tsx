@@ -3,15 +3,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User } from '@/types';
-import { FiUser, FiSettings, FiLogOut, FiChevronDown } from 'react-icons/fi';
+import { FiUser, FiSettings, FiLogOut, FiChevronDown, FiStar } from 'react-icons/fi';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
 interface ProfileDropdownProps {
   user: User;
+  onLogout?: () => void;
+  onUpgrade?: () => void;
 }
 
-export default function ProfileDropdown({ user }: ProfileDropdownProps) {
+export default function ProfileDropdown({ user, onLogout, onUpgrade }: ProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
@@ -32,8 +34,12 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
   }, []);
 
   const handleLogout = async () => {
-    await logout();
-    router.push('/');
+    if (onLogout) {
+      await onLogout();
+    } else {
+      await logout();
+      router.push('/');
+    }
   };
 
   const getInitials = (name: string) => {
@@ -99,12 +105,21 @@ export default function ProfileDropdown({ user }: ProfileDropdownProps) {
               </button>
             </div>
             <div className="py-1 border-t border-gray-100">
+              {onUpgrade && (
+                <button
+                  onClick={onUpgrade}
+                  className="w-full text-left px-4 py-2 text-sm text-yoruba-navy hover:bg-gray-100 flex items-center space-x-2"
+                >
+                  <FiStar className="w-4 h-4" />
+                  <span>Upgrade Plan</span>
+                </button>
+              )}
               <button
                 onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
               >
-                <FiLogOut className="mr-3" />
-                Sign out
+                <FiLogOut className="w-4 h-4" />
+                <span>Sign out</span>
               </button>
             </div>
           </motion.div>
