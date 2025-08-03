@@ -50,15 +50,15 @@
   "/profile/page": "app/profile/page.js",
   "/test-connection/page": "app/test-connection/page.js",
   "/api/admin/change-password/route": "app/api/admin/change-password/route.js",
-  "/api/auth/update-plan/route": "app/api/auth/update-plan/route.js",
   "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/api/auth/update-plan/route": "app/api/auth/update-plan/route.js",
   "/api/test/route": "app/api/test/route.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/dashboard/teacher/groups/new/page": "app/dashboard/teacher/groups/new/page.js",
   "/dashboard/teacher/groups/page": "app/dashboard/teacher/groups/page.js",
   "/dashboard/teacher/page": "app/dashboard/teacher/page.js",
-  "/dashboard/teacher/sessions/[id]/page": "app/dashboard/teacher/sessions/[id]/page.js",
   "/dashboard/teacher/sessions/[id]/edit/page": "app/dashboard/teacher/sessions/[id]/edit/page.js",
-  "/dashboard/teacher/sessions/page": "app/dashboard/teacher/sessions/page.js",
-  "/dashboard/teacher/sessions/new/page": "app/dashboard/teacher/sessions/new/page.js"
+  "/dashboard/teacher/sessions/[id]/page": "app/dashboard/teacher/sessions/[id]/page.js",
+  "/dashboard/teacher/sessions/new/page": "app/dashboard/teacher/sessions/new/page.js",
+  "/dashboard/teacher/sessions/page": "app/dashboard/teacher/sessions/page.js"
 }

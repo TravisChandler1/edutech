@@ -1,134 +1,164 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import ProfileDropdown from '@/components/ProfileDropdown';
 import PlanUpgrade from '@/components/PlanUpgrade';
-import DashboardOverview from '@/components/dashboard/DashboardOverview';
-import BookClubSection from '@/components/dashboard/BookClubSection';
-import LiveClassesSection from '@/components/dashboard/LiveClassesSection';
-import GroupsSection from '@/components/dashboard/GroupsSection';
-import { 
-  FaHome, 
-  FaBook, 
-  FaVideo, 
-  FaUsers,
-  FaCrown 
-} from 'react-icons/fa';
+import { FaHome, FaBook, FaVideo, FaUsers, FaCrown } from 'react-icons/fa';
+// User type is used in type annotations
+
+// Lazy load heavy components
+const DashboardOverview = dynamic(() => import('@/components/dashboard/DashboardOverview'), {
+  loading: () => <div className="text-yoruba-gold">Loading dashboard...</div>,
+});
+
+const BookClubSection = dynamic(() => import('@/components/dashboard/BookClubSection'), {
+  loading: () => <div className="text-yoruba-gold">Loading book club...</div>,
+});
+
+const LiveClassesSection = dynamic(() => import('@/components/dashboard/LiveClassesSection'), {
+  loading: () => <div className="text-yoruba-gold">Loading classes...</div>,
+});
+
+const GroupsSection = dynamic(() => import('@/components/dashboard/GroupsSection'), {
+  loading: () => <div className="text-yoruba-gold">Loading groups...</div>,
+});
 
 type DashboardTab = 'overview' | 'book-club' | 'live-classes' | 'groups' | 'upgrade';
+
+interface NavigationItem {
+  id: DashboardTab;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+}
+
+const NAVIGATION_ITEMS: NavigationItem[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    icon: FaHome,
+    description: 'Dashboard overview and progress'
+  },
+  {
+    id: 'book-club',
+    label: 'Book Club',
+    icon: FaBook,
+    description: 'Join book discussions and reading sessions'
+  },
+  {
+    id: 'live-classes',
+    label: 'Live Classes',
+    icon: FaVideo,
+    description: 'Attend live Yoruba classes and sessions'
+  },
+  {
+    id: 'groups',
+    label: 'Study Groups',
+    icon: FaUsers,
+    description: 'Create and join study groups'
+  },
+  {
+    id: 'upgrade',
+    label: 'Upgrade Plan',
+    icon: FaCrown,
+    description: 'Upgrade your learning plan'
+  }
+];
 
 export default function Dashboard() {
   const { currentUser, loading, logout } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
+  // Handle auth state changes and redirects
   useEffect(() => {
     if (!loading && !currentUser) {
       router.push('/');
-    } else if (currentUser) {
-      // Redirect teachers to their specific dashboard
-      if (currentUser.role === 'teacher') {
-        router.push('/dashboard/teacher');
-        return;
-      }
+      return;
+    }
+    
+    if (currentUser?.role === 'teacher') {
+      router.push('/dashboard/teacher');
     }
   }, [currentUser, loading, router]);
 
-  const handleLogout = async () => {
-    await logout();
-    router.push('/');
-  };
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  }, [logout, router]);
 
-  const handlePlanUpgrade = async (newPlan: string, newCategory: string) => {
+  const handlePlanUpgrade = useCallback(async (newPlan: string, newCategory: string) => {
+    if (!currentUser) return;
+    
+    setIsUpgrading(true);
     try {
       // In a real app, this would call your API to update the user's plan
-      console.log(`Upgrading to ${newPlan} plan with ${newCategory} category`);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Show success message
-      alert('Plan upgraded successfully!');
-      
+      const response = await fetch('/api/user/upgrade-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          userId: currentUser.id,
+          plan: newPlan,
+          category: newCategory 
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upgrade plan');
+      }
+
+      // Refresh user data
+      window.location.reload();
     } catch (error) {
-      console.error('Error upgrading plan:', error);
-      alert('Failed to upgrade plan. Please try again.');
       console.error('Plan upgrade error:', error);
       alert(error instanceof Error ? error.message : 'Failed to update plan');
+    } finally {
+      setIsUpgrading(false);
     }
-  };
+  }, [currentUser]);
 
-  // Navigation items for the dashboard
-  const navigationItems = [
-    {
-      id: 'overview' as const,
-      label: 'Overview',
-      icon: FaHome,
-      description: 'Dashboard overview and progress'
-    },
-    {
-      id: 'book-club' as const,
-      label: 'Book Club',
-      icon: FaBook,
-      description: 'Join book discussions and reading sessions'
-    },
-    {
-      id: 'live-classes' as DashboardTab,
-      label: 'Live Classes',
-      icon: FaVideo,
-      description: 'Attend live Yoruba classes and sessions'
-    },
-    {
-      id: 'groups' as DashboardTab,
-      label: 'Study Groups',
-      icon: FaUsers,
-      description: 'Create and join study groups'
-    },
-    {
-      id: 'upgrade' as DashboardTab,
-      label: 'Upgrade Plan',
-      icon: FaCrown,
-      description: 'Upgrade your learning plan'
-    }
-  ];
-
-  if (loading) {
+  if (loading || !currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yoruba-navy to-yoruba-green flex items-center justify-center">
-        <div className="text-white text-xl font-exo">Loading...</div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-gold"></div>
       </div>
     );
   }
 
-  if (!currentUser) {
-    return null;
-  }
-
   // Render content based on active tab
-  const renderTabContent = () => {
+  const renderTabContent = useCallback(() => {
+    const commonProps = { user: currentUser };
+    
     switch (activeTab) {
       case 'overview':
-        return <DashboardOverview user={currentUser} />;
+        return <DashboardOverview {...commonProps} />;
       case 'book-club':
-        return <BookClubSection user={currentUser} />;
+        return <BookClubSection {...commonProps} />;
       case 'live-classes':
-        return <LiveClassesSection user={currentUser} />;
+        return <LiveClassesSection {...commonProps} />;
       case 'groups':
-        return <GroupsSection user={currentUser} />;
+        return <GroupsSection {...commonProps} />;
       case 'upgrade':
         return (
           <PlanUpgrade
             currentPlan={currentUser.selectedPlan || 'Novice'}
             currentCategory={currentUser.selectedCategory || 'Group'}
             onUpgrade={handlePlanUpgrade}
+            isLoading={isUpgrading}
           />
         );
       default:
-        return <DashboardOverview user={currentUser} />;
+        return <DashboardOverview {...commonProps} />;
     }
-  };
+  }, [activeTab, currentUser, handlePlanUpgrade, isUpgrading]);
 
   return (
     <div className="min-h-screen bg-yoruba-navy flex flex-col">
@@ -163,7 +193,7 @@ export default function Dashboard() {
               <div className="flex-1 flex items-center sm:items-stretch">
                 <div className="hidden sm:block">
                   <div className="flex space-x-1 md:space-x-2 lg:space-x-4">
-                    {navigationItems.map((item) => (
+                    {NAVIGATION_ITEMS.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => setActiveTab(item.id)}
@@ -203,7 +233,7 @@ export default function Dashboard() {
         {/* Mobile menu */}
         <div className="sm:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-yoruba-navy/30 backdrop-blur-lg border-t border-white/10">
-            {navigationItems.map((item) => (
+            {NAVIGATION_ITEMS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
@@ -228,7 +258,7 @@ export default function Dashboard() {
             {renderTabContent()}
             {activeTab === 'upgrade' && (
               <PlanUpgrade 
-                currentPlan={currentUser?.selectedPlan || 'Free'} 
+                currentPlan={currentUser?.selectedPlan || 'Novice'} 
                 currentCategory={currentUser?.selectedCategory || 'Group'}
                 onUpgrade={handlePlanUpgrade}
               />
