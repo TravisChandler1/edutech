@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { Community } from '../types';
 import { User } from '../types';
@@ -11,7 +11,8 @@ interface CommunityProps {
   onJoinCommunity?: (communityId: string) => void;
 }
 
-const sampleCommunities: Community[] = [
+// Initial communities data - will be replaced by API data
+const initialCommunities: Community[] = [
   {
     id: '1',
     name: 'Yoruba Beginners Circle',
@@ -49,6 +50,28 @@ const sampleCommunities: Community[] = [
 ];
 
 export default function Community({ user, onCreateCommunity, onJoinCommunity }: CommunityProps) {
+  const [communities, setCommunities] = useState<Community[]>([]);
+
+  // Fetch communities from API
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const response = await fetch('/api/communities');
+        if (response.ok) {
+          const data = await response.json();
+          setCommunities(data.communities || []);
+        } else {
+          throw new Error('Failed to fetch communities');
+        }
+      } catch (err) {
+        console.error('Error fetching communities:', err);
+        // Fallback to initial data if API fails
+        setCommunities(initialCommunities);
+      }
+    };
+
+    fetchCommunities();
+  }, []);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [communityForm, setCommunityForm] = useState({
     name: '',
@@ -95,8 +118,8 @@ export default function Community({ user, onCreateCommunity, onJoinCommunity }: 
     }
   };
 
-  const approvedCommunities = sampleCommunities.filter(c => c.isApproved);
-  const pendingCommunities = sampleCommunities.filter(c => !c.isApproved && c.creatorId === user.id);
+  const approvedCommunities = communities.filter(c => c.isApproved);
+  const pendingCommunities = communities.filter(c => !c.isApproved && c.creatorId === user.id);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yoruba-cream to-white">

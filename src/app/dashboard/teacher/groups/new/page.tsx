@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { motion } from 'framer-motion';
-import { UserGroupIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
-import DashboardCard from '@/components/dashboard/DashboardCard';
+
+import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 interface Student {
   id: string;

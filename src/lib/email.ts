@@ -165,7 +165,8 @@ export const sendAdminNotification = async (
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('Failed to send admin notification:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return { success: false, error: errorMessage };
   }
 };
 
@@ -224,6 +225,7 @@ export const sendWelcomeEmail = async (name: string, email: string) => {
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('Failed to send welcome email:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return { success: false, error: errorMessage };
   }
 };

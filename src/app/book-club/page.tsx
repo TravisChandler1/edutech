@@ -1,33 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '@/components/AuthModal';
 import dynamic from 'next/dynamic';
-import { BookClubSession, Book } from '@/types';
-
-// Sample books data
-const sampleBooks: Book[] = [
-  {
-    id: '1',
-    title: 'Àkójọpọ̀ Àwọn Àlọ́ Yorùbá',
-    synopsis: 'A collection of traditional Yoruba folktales that teach moral lessons and cultural values.',
-    coverImage: '/images/yoruba-tales.jpg'
-  },
-  {
-    id: '2',
-    title: 'Ìtàn Òdùduwà',
-    synopsis: 'The legendary story of Oduduwa, the progenitor of the Yoruba people.',
-    coverImage: '/images/oduduwa-story.jpg'
-  },
-  {
-    id: '3',
-    title: 'Ewì Yorùbá Àtijọ́',
-    synopsis: 'Classical Yoruba poetry exploring themes of love, nature, and spirituality.',
-    coverImage: '/images/yoruba-poetry.jpg'
-  }
-];
+import { BookClubSession } from '@/types';
 
 // Dynamically import the BookClub component with no SSR
 const BookClub = dynamic(() => import('@/components/BookClub'), {
@@ -40,32 +18,14 @@ const BookClub = dynamic(() => import('@/components/BookClub'), {
 });
 
 export default function BookClubPage() {
-  const { currentUser, loading } = useAuth();
-  const router = useRouter();
+  const { currentUser } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
-  const [isClient, setIsClient] = useState(false);
-  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
-    setAuthModalMode(mode);
-    setShowAuthModal(true);
-  };
 
   const handleScheduleSession = (sessionData: Partial<BookClubSession>) => {
     console.log('Scheduling book club session:', sessionData);
     // TODO: Implement API call to schedule session
   };
-
-  // Removed auto-popup auth modal timer
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-yoruba-cream">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-green"></div>
-      </div>
-    );
-  }
 
   const visitorContent = (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto my-12">
@@ -132,7 +92,7 @@ export default function BookClubPage() {
           <AuthModal
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            defaultMode={authModalMode}
+            defaultMode="register"
           />
         </div>
       </div>
@@ -152,8 +112,7 @@ export default function BookClubPage() {
           </p>
         </div>
         <BookClub 
-          user={currentUser} 
-          currentBooks={sampleBooks}
+          user={currentUser}
           onScheduleSession={handleScheduleSession}
         />
       </div>

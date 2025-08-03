@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+
 
 import ClassCard from '../../components/ClassCard';
 import YorubaProverb from '../../components/YorubaProverb';
@@ -57,29 +57,13 @@ const features = [
 ];
 
 export default function Classes() {
-  const router = useRouter();
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<ClassLevel['level']>('Novice');
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
-  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
-  const { currentUser, loading } = useAuth();
-
-  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
-    setAuthModalMode(mode);
-    setShowAuthModal(true);
-  };
+  const { currentUser } = useAuth();
 
   // Removed auto-popup auth modal timer
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-yoruba-cream">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yoruba-green"></div>
-      </div>
-    );
-  }
 
   const handleClassSelect = (level: ClassLevel['level']) => {
     if (!currentUser) {
@@ -133,7 +117,7 @@ export default function Classes() {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        defaultMode={authModalMode}
+        defaultMode="register"
       />
       
       {/* Class Levels Section */}

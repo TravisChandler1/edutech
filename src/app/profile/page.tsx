@@ -278,14 +278,19 @@ const ProfilePage: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Update user context
+      if (!currentUser?.id) {
+        throw new Error('User ID is required');
+      }
+      
       const updatedUser = {
         ...currentUser,
+        id: currentUser.id, // Ensure id is always defined
         name: formData.name,
         email: formData.email,
-        avatar: avatarPreview || currentUser?.avatar
+        avatar: avatarPreview || currentUser.avatar
       };
       
-      updateUser(updatedUser);
+      updateUser(updatedUser as User);
       
       // Reset form state
       setFormData(prev => ({

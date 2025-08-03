@@ -1,7 +1,6 @@
 export const initializePaystackPayment = (
   email: string,
   amount: number,
-  callbackUrl: string,
   onSuccess: () => void,
   onClose: () => void
 ) => {
@@ -12,7 +11,7 @@ export const initializePaystackPayment = (
     email,
     amount, // in kobo
     currency: 'NGN',
-    callback: (response: any) => {
+    callback: () => {
       onSuccess();
     },
     onClose,

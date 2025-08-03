@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Ebook, SavedBook, User } from '../types';
 
@@ -10,7 +10,8 @@ interface EbookArchiveProps {
   onRemoveSavedBook?: (savedBookId: string) => void;
 }
 
-const sampleEbooks: Ebook[] = [
+// Initial ebooks data - will be replaced by API data
+const initialEbooks: Ebook[] = [
   {
     id: '1',
     title: 'Yoruba Grammar Fundamentals',
@@ -91,7 +92,8 @@ const sampleEbooks: Ebook[] = [
   }
 ];
 
-const sampleSavedBooks: SavedBook[] = [
+// Initial saved books data - will be replaced by API data
+const initialSavedBooks: SavedBook[] = [
   {
     id: '1',
     userId: 'user1',
@@ -111,6 +113,37 @@ const sampleSavedBooks: SavedBook[] = [
 ];
 
 export default function EbookArchive({ user, onSaveBook, onRemoveSavedBook }: EbookArchiveProps) {
+  const [ebooks, setEbooks] = useState<Ebook[]>([]);
+  const [savedBooks, setSavedBooks] = useState<SavedBook[]>([]);
+
+  // Fetch ebooks and saved books from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [ebooksResponse, savedBooksResponse] = await Promise.all([
+          fetch('/api/ebooks'),
+          fetch(`/api/users/${user.id}/saved-books`)
+        ]);
+        
+        if (ebooksResponse.ok) {
+          const ebooksData = await ebooksResponse.json();
+          setEbooks(ebooksData.ebooks || []);
+        }
+        
+        if (savedBooksResponse.ok) {
+          const savedBooksData = await savedBooksResponse.json();
+          setSavedBooks(savedBooksData.savedBooks || []);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        // Fallback to initial data if API fails
+        setEbooks(initialEbooks);
+        setSavedBooks(initialSavedBooks);
+      }
+    };
+
+    fetchData();
+  }, [user.id]);
   const [activeTab, setActiveTab] = useState<'all' | 'saved'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('All');
@@ -152,7 +185,7 @@ export default function EbookArchive({ user, onSaveBook, onRemoveSavedBook }: Eb
     }
   };
 
-  const filteredEbooks = sampleEbooks.filter(ebook => {
+  const filteredEbooks = ebooks.filter(ebook => {
     const matchesCategory = selectedCategory === 'All' || ebook.category === selectedCategory;
     const matchesLanguage = selectedLanguage === 'All' || ebook.language === selectedLanguage;
     const matchesSearch = searchQuery === '' || 
@@ -163,11 +196,12 @@ export default function EbookArchive({ user, onSaveBook, onRemoveSavedBook }: Eb
     return matchesCategory && matchesLanguage && matchesSearch;
   });
 
-  const savedEbookIds = sampleSavedBooks.filter(sb => sb.userId === user.id).map(sb => sb.ebookId);
-  const savedEbooks = sampleEbooks.filter(ebook => savedEbookIds.includes(ebook.id));
+  const userSavedBooks = savedBooks.filter(savedBook => savedBook.userId === user.id);
+  const savedEbookIds = userSavedBooks.map(sb => sb.ebookId);
+  const savedEbooks = ebooks.filter(ebook => savedEbookIds.includes(ebook.id));
 
   const getSavedBookProgress = (ebookId: string) => {
-    const savedBook = sampleSavedBooks.find(sb => sb.userId === user.id && sb.ebookId === ebookId);
+    const savedBook = savedBooks.find(sb => sb.userId === user.id && sb.ebookId === ebookId);
     return savedBook?.readingProgress || 0;
   };
 
@@ -395,7 +429,7 @@ export default function EbookArchive({ user, onSaveBook, onRemoveSavedBook }: Eb
                         </button>
                         <button
                           onClick={() => {
-                            const savedBook = sampleSavedBooks.find(sb => sb.userId === user.id && sb.ebookId === ebook.id);
+                            const savedBook = savedBooks.find(sb => sb.userId === user.id && sb.ebookId === ebook.id);
                             if (savedBook) {
                               onRemoveSavedBook?.(savedBook.id);
                             }

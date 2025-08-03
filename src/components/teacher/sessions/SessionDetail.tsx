@@ -1,13 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { 
   VideoCameraIcon, 
   ClockIcon, 
-  UserGroupIcon,
   CheckCircleIcon,
-  XMarkIcon,
   LinkIcon,
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline';
@@ -19,7 +16,6 @@ interface SessionDetailProps {
 }
 
 export default function SessionDetail({ sessionId }: SessionDetailProps) {
-  const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('details');
@@ -59,7 +55,6 @@ export default function SessionDetail({ sessionId }: SessionDetailProps) {
   }
 
   const startTime = new Date(session.startTime);
-  const endTime = new Date(startTime.getTime() + session.durationMinutes * 60000);
   const isSessionInProgress = session.status === 'in_progress';
   const isSessionScheduled = session.status === 'scheduled' && !isPast(startTime);
 

@@ -119,6 +119,8 @@ export interface LiveClass {
   maxStudents: number;
   enrolledStudents: string[];
   isLive: boolean;
+  meetingLink: string; // Google Meet link
+  meetingPassword?: string; // Google Meet password
   recordingUrl?: string;
   createdAt: string;
 }

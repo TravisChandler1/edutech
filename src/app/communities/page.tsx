@@ -1,8 +1,8 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+import { useState } from 'react';
 import AuthModal from '@/components/AuthModal';
 import dynamic from 'next/dynamic';
 
@@ -24,17 +24,7 @@ interface CommunityProps {
 
 export default function CommunitiesPage() {
   const { currentUser, loading } = useAuth();
-  const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
-  const [isClient, setIsClient] = useState(false);
-  
-  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
-    setAuthModalMode(mode);
-    setShowAuthModal(true);
-  };
-
-  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Removed auto-popup auth modal timer
 
@@ -111,7 +101,7 @@ export default function CommunitiesPage() {
           <AuthModal
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
-            defaultMode={authModalMode}
+            defaultMode="register"
           />
         </div>
       </div>

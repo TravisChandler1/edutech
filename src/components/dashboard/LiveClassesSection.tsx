@@ -115,7 +115,7 @@ export default function LiveClassesSection({ user }: LiveClassesSectionProps) {
     alert('Class booked successfully! You will receive a confirmation email.');
   };
 
-  const joinClass = (classId: string, meetingLink?: string) => {
+  const joinClass = (_classId: string, meetingLink?: string) => {
     if (meetingLink) {
       window.open(meetingLink, '_blank');
     } else {

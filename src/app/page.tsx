@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import ClassCard from '../components/ClassCard';
@@ -18,10 +17,9 @@ export default function Home() {
   const { currentUser, loading } = useAuth();
   const router = useRouter();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('register');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visitorTimer, setVisitorTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isClient, setIsClient] = useState(false);
 
   // Set isClient to true after component mounts
   useEffect(() => {
@@ -30,13 +28,6 @@ export default function Home() {
       router.push('/dashboard');
     }
   }, [loading, currentUser, router]);
-
-  // Removed auto-popup auth modal timer
-
-  const openAuthModal = (mode: 'login' | 'register' = 'register') => {
-    setAuthModalMode(mode);
-    setShowAuthModal(true);
-  };
 
   if (loading || !isClient) {
     return (
@@ -128,29 +119,7 @@ export default function Home() {
     }
   };
 
-  // Visitor features section
-  const visitorFeatures = [
-    {
-      icon: '📚',
-      title: 'Interactive Classes',
-      description: 'Live and pre-recorded classes for all levels'
-    },
-    {
-      icon: '👥',
-      title: 'Community Learning',
-      description: 'Join discussions and practice with peers'
-    },
-    {
-      icon: '📖',
-      title: 'Ebook Library',
-      description: 'Access to our growing collection of Yoruba literature'
-    },
-    {
-      icon: '🎭',
-      title: 'Cultural Immersion',
-      description: 'Learn about Yoruba traditions and customs'
-    }
-  ];
+  // Visitor features section - removed unused constant
 
   return (
     <div className="w-full">

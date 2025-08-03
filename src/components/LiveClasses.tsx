@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LiveClass, PreRecordedClass, User } from '../types';
 
 interface LiveClassesProps {
   user: User;
-  onScheduleLiveClass?: (classData: Partial<LiveClass>) => void;
+  onScheduleClass?: (classData: Partial<LiveClass>) => void;
   onJoinClass?: (classId: string) => void;
 }
 
-const sampleLiveClasses: LiveClass[] = [
+// Live classes will be fetched from API
+const initialLiveClasses: LiveClass[] = [
   {
     id: '1',
     teacherId: 'teacher1',
@@ -22,6 +23,8 @@ const sampleLiveClasses: LiveClass[] = [
     maxStudents: 15,
     enrolledStudents: ['student1', 'student2'],
     isLive: false,
+    meetingLink: 'https://meet.google.com/abc-1234-xyz',
+    meetingPassword: 'yoruba123',
     createdAt: '2024-01-25T10:00:00Z'
   },
   {
@@ -35,11 +38,14 @@ const sampleLiveClasses: LiveClass[] = [
     maxStudents: 10,
     enrolledStudents: ['student3', 'student4', 'student5'],
     isLive: true,
+    meetingLink: 'https://meet.google.com/def-5678-uvw',
+    meetingPassword: 'yoruba456',
     createdAt: '2024-01-26T09:00:00Z'
   }
 ];
 
-const samplePreRecordedClasses: PreRecordedClass[] = [
+// Pre-recorded classes will be fetched from API
+const initialPreRecordedClasses: PreRecordedClass[] = [
   {
     id: '1',
     teacherId: 'teacher1',
@@ -66,7 +72,39 @@ const samplePreRecordedClasses: PreRecordedClass[] = [
   }
 ];
 
-export default function LiveClasses({ user, onScheduleLiveClass, onJoinClass }: LiveClassesProps) {
+export default function LiveClasses({ user, onScheduleClass, onJoinClass }: LiveClassesProps) {
+  const [liveClasses, setLiveClasses] = useState<LiveClass[]>([]);
+  const [preRecordedClasses, setPreRecordedClasses] = useState<PreRecordedClass[]>([]);
+
+  // Fetch live classes from API
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const [liveResponse, recordedResponse] = await Promise.all([
+          fetch('/api/classes/live'),
+          fetch('/api/classes/recorded')
+        ]);
+        
+        if (liveResponse.ok) {
+          const liveData = await liveResponse.json();
+          setLiveClasses(liveData.classes || []);
+        }
+        
+        if (recordedResponse.ok) {
+          const recordedData = await recordedResponse.json();
+          setPreRecordedClasses(recordedData.classes || []);
+        }
+      } catch (err) {
+        console.error('Error fetching classes:', err);
+        // Fallback to sample data if API fails
+        setLiveClasses(initialLiveClasses);
+        setPreRecordedClasses(initialPreRecordedClasses);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+
   const [activeTab, setActiveTab] = useState<'live' | 'recorded'>('live');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [classForm, setClassForm] = useState({
@@ -80,8 +118,8 @@ export default function LiveClasses({ user, onScheduleLiveClass, onJoinClass }: 
 
   const handleScheduleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onScheduleLiveClass) {
-      onScheduleLiveClass({
+    if (onScheduleClass) {
+      onScheduleClass({
         ...classForm,
         teacherId: user.id,
         enrolledStudents: [],
@@ -178,7 +216,7 @@ export default function LiveClasses({ user, onScheduleLiveClass, onJoinClass }: 
             transition={{ duration: 0.3 }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {sampleLiveClasses.map((liveClass) => (
+              {liveClasses.map((liveClass) => (
                 <div key={liveClass.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -253,7 +291,7 @@ export default function LiveClasses({ user, onScheduleLiveClass, onJoinClass }: 
             transition={{ duration: 0.3 }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {samplePreRecordedClasses.map((recordedClass) => (
+              {preRecordedClasses.map((recordedClass) => (
                 <div key={recordedClass.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
                   <div className="relative">
                     <div className="h-48 bg-gradient-to-br from-yoruba-green/20 to-yoruba-red/20 flex items-center justify-center">

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { 
   PlusIcon, 
   VideoCameraIcon, 
@@ -48,7 +46,6 @@ interface Pagination {
 }
 
 export default function SessionsList() {
-  const router = useRouter();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

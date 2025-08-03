@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BookClubSession, Book, User } from '../types';
 
 interface BookClubProps {
   user: User;
-  currentBooks: Book[];
   onScheduleSession?: (sessionData: Partial<BookClubSession>) => void;
 }
 
@@ -31,7 +30,24 @@ const sampleBooks: Book[] = [
   }
 ];
 
-export default function BookClub({ user, currentBooks = sampleBooks, onScheduleSession }: BookClubProps) {
+export default function BookClub({ user, onScheduleSession }: BookClubProps) {
+  const books = sampleBooks;
+
+  // Fetch book club sessions from API
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await fetch('/api/book-club/sessions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch book club sessions');
+        }
+      } catch (err) {
+        console.error('Error fetching book club sessions:', err);
+      }
+    };
+
+    fetchSessions();
+  }, []);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [sessionForm, setSessionForm] = useState({
@@ -90,7 +106,7 @@ export default function BookClub({ user, currentBooks = sampleBooks, onScheduleS
         >
           <h2 className="text-2xl font-semibold text-yoruba-green mb-6">Current Book Selection</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentBooks.map((book) => (
+            {books.map((book) => (
               <motion.div
                 key={book.id}
                 className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"

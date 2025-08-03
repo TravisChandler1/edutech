@@ -37,7 +37,6 @@ export default function ClassCard({ classLevel, onWaitlist, onAuthRequired, isAu
     initializePaystackPayment(
       'user@example.com', // Replace with authenticated user email
       amount * 100, // Paystack expects kobo
-      '/classes',
       () => {
         setIsLoading(false);
         alert('Payment successful! You are now enrolled.');

@@ -124,24 +124,12 @@ export default function AdminDashboard() {
 
   const fetchPendingCommunities = async () => {
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/communities/pending');
-      // const data = await response.json();
-      // setPendingCommunities(data);
-      
-      // Mock data for now
-      setPendingCommunities([
-        {
-          id: '1',
-          name: 'Yoruba Learners',
-          description: 'A community for Yoruba language learners',
-          creatorId: '2',
-          members: ['2', '3'],
-          isApproved: false,
-          category: 'Study Group',
-          createdAt: new Date().toISOString(),
-        },
-      ]);
+      const response = await fetch('/api/admin/communities/pending');
+      if (!response.ok) {
+        throw new Error('Failed to fetch pending communities');
+      }
+      const data = await response.json();
+      setPendingCommunities(data.communities || []);
     } catch (err) {
       setError('Failed to fetch pending communities');
       console.error('Error fetching pending communities:', err);
@@ -152,51 +140,13 @@ export default function AdminDashboard() {
   const fetchUsers = async () => {
     try {
       // TODO: Replace with actual API call
-      // const response = await fetch('/api/admin/users');
-      // const data = await response.json();
-      // setUsers(data);
-      
-      // Mock data for now
-      const mockUsers: User[] = [
-        {
-          id: '1',
-          name: 'Admin User',
-          email: 'admin@example.com',
-          role: 'admin',
-          status: 'active',
-          plan: 'Advanced',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          name: 'Teacher One',
-          email: 'teacher@example.com',
-          role: 'teacher',
-          status: 'active',
-          plan: 'Advanced',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '3',
-          name: 'Student One',
-          email: 'student@example.com',
-          role: 'student',
-          status: 'active',
-          plan: 'Beginner',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '4',
-          name: 'Suspended User',
-          email: 'suspended@example.com',
-          role: 'student',
-          status: 'suspended',
-          plan: 'Novice',
-          createdAt: new Date().toISOString(),
-        },
-      ];
-      setUsers(mockUsers);
-      return mockUsers;
+      const response = await fetch('/api/admin/users');
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data = await response.json();
+      setUsers(data.users || []);
+      return data.users || [];
     } catch (err) {
       setError('Failed to fetch users');
       console.error('Error fetching users:', err);
@@ -206,8 +156,19 @@ export default function AdminDashboard() {
 
   const handleApproveCommunity = async (communityId: string) => {
     try {
-      // TODO: Implement approve community logic
+      setIsLoading(true);
+      // TODO: Replace with actual API call
+      // await fetch(`/api/admin/communities/${communityId}/approve`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      // });
+      
+      // Update local state
+      setPendingCommunities(prev => 
+        prev.filter(community => community.id !== communityId)
+      );
       setSuccess('Community approved successfully');
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError('Failed to approve community');
       console.error('Error approving community:', err);

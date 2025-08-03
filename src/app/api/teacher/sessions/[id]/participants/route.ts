@@ -130,7 +130,7 @@ export async function POST(
     }
 
     // Add participants
-    const values = userIds.map((userId: string, index: number) => 
+    const values = userIds.map((_userId: string, index: number) => 
       `($1, $${index + 2}, NOW())`
     ).join(',');
     

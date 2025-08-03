@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { revalidatePath } from 'next/cache';
 
 // Helper function to check if user is an authorized teacher
 async function getAuthorizedTeacher(request: NextRequest) {
@@ -92,7 +91,7 @@ export async function POST(request: Request) {
 
     // Add students to the group
     if (studentIds && studentIds.length > 0) {
-      const values = studentIds.map((studentId: string, index: number) => 
+      const values = studentIds.map((_studentId: string, index: number) => 
         `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`
       ).join(',');
       

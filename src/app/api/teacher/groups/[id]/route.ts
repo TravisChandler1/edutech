@@ -141,7 +141,7 @@ export async function PATCH(
 
       // Then add the new members
       if (studentIds.length > 0) {
-        const values = studentIds.map((studentId: string, index: number) => 
+        const values = studentIds.map((_studentId: string, index: number) => 
           `($1, $${index + 2}, NOW())`
         ).join(',');
         

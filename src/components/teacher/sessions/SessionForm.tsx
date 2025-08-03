@@ -2,17 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { motion } from 'framer-motion';
 import { 
   PlusIcon, 
   XMarkIcon, 
-  UserGroupIcon, 
-  ClockIcon,
-  CalendarIcon,
-  InformationCircleIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { format, addMinutes, isBefore } from 'date-fns';
@@ -69,7 +64,6 @@ export default function SessionForm({ initialData, onSuccess }: SessionFormProps
   const isEditMode = !!initialData?.id;
 
   const {
-    control,
     register,
     handleSubmit,
     watch,
@@ -179,7 +173,7 @@ export default function SessionForm({ initialData, onSuccess }: SessionFormProps
         throw new Error(errorData.error || 'Failed to save session');
       }
       
-      const result = await response.json();
+      await response.json();
       
       toast.success(
         isEditMode 

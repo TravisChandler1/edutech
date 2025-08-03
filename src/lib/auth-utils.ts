@@ -1,4 +1,3 @@
-import { NextRequest } from 'next/server';
 import { verifyAuth } from './auth';
 
 export async function auth() {

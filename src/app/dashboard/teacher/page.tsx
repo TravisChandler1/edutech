@@ -420,10 +420,3 @@ export default function TeacherDashboard() {
   );
 }
 
-interface DashboardCardProps {
-  icon: React.ReactNode;
-  title: string;
-  value: string | number;
-  description: string;
-  link?: string;
-}

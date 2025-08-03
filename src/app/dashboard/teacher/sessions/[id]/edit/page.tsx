@@ -9,6 +9,23 @@ type Props = {
   params: { id: string };
 };
 
+interface SessionData {
+  id: string;
+  title: string;
+  description: string;
+  startTime: string;
+  durationMinutes: number;  // Changed from duration to durationMinutes
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  meetingLink?: string;
+  meetingPassword?: string;
+  maxParticipants?: number;
+  teacherId: string;
+  groupId?: string | null;
+  planId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const headersList = headers();
   const request = new NextRequest('http://localhost', { headers: Object.fromEntries(headersList.entries()) });
@@ -57,7 +74,7 @@ export default async function EditSessionPage({ params }: Props) {
   }
 
   // Fetch the session data
-  let sessionData = null;
+  let sessionData: SessionData | null = null;
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/teacher/sessions/${params.id}`,
@@ -74,6 +91,11 @@ export default async function EditSessionPage({ params }: Props) {
     
     const response = await res.json();
     sessionData = response.data;
+    
+    // Handle case where sessionData is null or undefined
+    if (!sessionData) {
+      return notFound();
+    }
     
     // Don't allow editing if session is in progress or completed
     if (['in_progress', 'completed', 'cancelled'].includes(sessionData.status)) {
